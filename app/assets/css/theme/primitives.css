@@ -1,0 +1,105 @@
+/* Primitives */
+:root {
+    /* Blur */
+    --blur-none: 0rem;
+    --blur-sm: 0.25rem;
+    --blur-base: 0.5rem;
+    --blur-md: 0.75rem;
+    --blur-lg: 1rem;
+    --blur-xl: 1.5rem;
+    --blur-2xl: 2.5rem;
+    --blur-3xl: 4rem;
+
+    /* Border width */
+    --border-width-0: 0rem;
+    --border-width-base: 0.0625rem;
+    --border-width-2: 0.125rem;
+    --border-width-4: 0.25rem;
+    --border-width-8: 0.5rem;
+
+    /* Leading */
+    --leading-3: 0.75rem;
+    --leading-4: 1rem;
+    --leading-5: 1.25rem;
+    --leading-6: 1.5rem;
+    --leading-7: 1.75rem;
+    --leading-8: 2rem;
+    --leading-9: 2.25rem;
+    --leading-10: 2.5rem;
+
+    /* Opacity */
+    --opacity-0: 0;
+    --opacity-5: 0.05;
+    --opacity-10: 0.1;
+    --opacity-15: 0.15;
+    --opacity-20: 0.2;
+    --opacity-25: 0.25;
+    --opacity-30: 0.3;
+    --opacity-35: 0.35;
+    --opacity-40: 0.4;
+    --opacity-45: 0.45;
+    --opacity-50: 0.5;
+    --opacity-55: 0.55;
+    --opacity-60: 0.6;
+    --opacity-65: 0.65;
+    --opacity-70: 0.7;
+    --opacity-75: 0.75;
+    --opacity-80: 0.8;
+    --opacity-85: 0.85;
+    --opacity-90: 0.9;
+    --opacity-95: 0.95;
+    --opacity-100: 1;
+
+
+    /* Rounded */
+    --rounded-none: 0rem;
+    --rounded-sm: 0.125rem;
+    --rounded-base: 0.25rem;
+    --rounded-md: 0.375rem;
+    --rounded-lg: 0.5rem;
+    --rounded-xl: 0.75rem;
+    --rounded-2xl: 1rem;
+    --rounded-3xl: 1.5rem;
+    --rounded-full: 624.9375rem;
+
+    /* Space */
+    --space-0: 0rem;
+    --space-0-half: 0.125rem;
+    --space-1: 0.25rem;
+    --space-1-half: 0.375rem;
+    --space-2: 0.5rem;
+    --space-2-half: 0.625rem;
+    --space-3: 0.75rem;
+    --space-3-half: 0.875rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-7: 1.75rem;
+    --space-8: 2rem;
+    --space-9: 2.25rem;
+    --space-10: 2.5rem;
+    --space-11: 2.75rem;
+    --space-12: 3rem;
+    --space-14: 3.5rem;
+    --space-16: 4rem;
+    --space-20: 5rem;
+    --space-24: 6rem;
+    --space-28: 7rem;
+    --space-32: 8rem;
+    --space-36: 9rem;
+
+    /* Text */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-4xl: 2.25rem;
+    --text-5xl: 3rem;
+    --text-6xl: 3.75rem;
+    --text-7xl: 4.5rem;
+    --text-8xl: 6rem;
+    --text-9xl: 8rem;
+}

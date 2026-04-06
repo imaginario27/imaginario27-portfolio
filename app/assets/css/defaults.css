@@ -1,0 +1,55 @@
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    color: var(--color-text-default);
+    overflow-x: hidden; /* Fix when sidebar open */
+    background-color: var(--color-background-surface);
+}
+
+/* Locks and unlocks the background scroll while modal is open */
+html.modal-open,
+body.modal-open {
+    overflow: hidden !important;
+}
+
+aside {
+    nav {
+        .router-link-active, .router-link-active svg {
+            color: var(--color-text-primary-brand-on-neutral-hover-bg);
+        }
+        
+        .router-link-active {
+            background: var(--color-background-neutral-hover);
+        }
+    }
+}
+
+.responsive-svg svg {
+    width: 100%;
+    height: auto;
+}
+
+a:hover, 
+button:hover {
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: var(--opacity-disabled);
+}
+
+/* DROPZONE */
+.custom-dropzone-preview-wrapper .dropzone-wrapper {
+    border: none!important;
+    padding: 0!important;
+}
+
+.vue3-toastify__toast-container {
+    z-index: 99999 !important; 
+}
