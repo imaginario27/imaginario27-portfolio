@@ -1,0 +1,8 @@
+query Pages {
+    pages {
+        nodes {
+            id
+            title
+        }
+    }
+}
