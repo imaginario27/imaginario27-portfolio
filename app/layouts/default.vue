@@ -1,3 +1,8 @@
 <template>
-    <slot />
+    <WebHeader/>
+    <MainContent>
+        <slot />
+    </MainContent>
+
+    <Footer />
 </template>

@@ -3,7 +3,7 @@ import tailwindcss from "@tailwindcss/vite"
 
 export default defineNuxtConfig({
     compatibilityDate: "2025-07-15",
-    devtools: { enabled: true },
+    devtools: { enabled: false },
 
     runtimeConfig: {
         public: {
@@ -21,12 +21,12 @@ export default defineNuxtConfig({
     ],
 
     imports: {
-        dirs: ["~/app/models/**"],
+        dirs: ["models/**"],
     },
 
     components: [
         {
-            path: "~/app/components",
+            path: "components",
             pathPrefix: false,
         },
     ],
