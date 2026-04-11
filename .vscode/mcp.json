@@ -1,0 +1,13 @@
+{
+	"servers": {
+		"nuxt": {
+			"type": "http",
+			"url": "https://nuxt.com/mcp"
+		},
+		"airui": {
+			"type": "http",
+			"url": "https://air-ui.netlify.app/mcp"
+		}
+	},
+	"inputs": []
+}
