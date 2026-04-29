@@ -1,0 +1,10 @@
+query Menu($language: String!, $location: MenuLocationEnum!) {
+    menuItems(where: { location: $location, language: $language }) {
+        nodes {
+            id
+            label
+            uri
+            parentId
+        }
+    }
+}

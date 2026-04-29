@@ -3,17 +3,30 @@ import tailwindcss from "@tailwindcss/vite"
 
 export default defineNuxtConfig({
     compatibilityDate: "2025-07-15",
-    devtools: { enabled: true },
+    devtools: { enabled: false },
 
-    modules: ["@pinia/nuxt", "@vueuse/nuxt", "@nuxt/content", "@nuxtjs/i18n", "@nuxt/image"],
+    runtimeConfig: {
+        public: {
+            GQL_HOST: process.env.GQL_HOST || "https://imaginario27.com/graphql",
+        }
+    },
+
+    modules: [
+      "@pinia/nuxt",
+      "@vueuse/nuxt",
+      "@nuxt/content",
+      "@nuxtjs/i18n",
+      "@nuxt/image",
+      "nuxt-graphql-client",
+    ],
 
     imports: {
-        dirs: ["~/app/models/**"],
+        dirs: ["models/**"],
     },
 
     components: [
         {
-            path: "~/app/components",
+            path: "components",
             pathPrefix: false,
         },
     ],
@@ -22,21 +35,27 @@ export default defineNuxtConfig({
 
     i18n: {
         langDir: "locales",
-        strategy: "no_prefix",
-        defaultLocale: "en",
-        detectBrowserLanguage: {
-            useCookie: true,
-            cookieKey: "i18n_redirected",
-            fallbackLocale: "en",
-            alwaysRedirect: false,
-            redirectOn: "root",
-        },
+        strategy: "prefix_except_default",
+        defaultLocale: "es",
+        detectBrowserLanguage: false,
         locales: [
+            {
+                code: "es",
+                iso: "es",
+                name: "Español",
+                file: "es.json",
+            },
             {
                 code: "en",
                 iso: "en",
                 name: "English",
                 file: "en.json",
+            },
+            {
+                code: "de",
+                iso: "de",
+                name: "Deutsch",
+                file: "de.json",
             },
         ],
         vueI18n: "i18n.config.ts",

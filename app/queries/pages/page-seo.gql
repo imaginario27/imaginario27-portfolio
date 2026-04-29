@@ -1,0 +1,20 @@
+query GetPageSEO($slug: ID!) {
+    page(id: $slug, idType: URI) {
+        title
+        seo {
+            title
+            metaDesc
+            canonical
+            opengraphTitle
+            opengraphDescription
+            opengraphImage {
+                sourceUrl
+            }
+            twitterTitle
+            twitterDescription
+            twitterImage {
+                sourceUrl
+            }
+        }
+    }
+}

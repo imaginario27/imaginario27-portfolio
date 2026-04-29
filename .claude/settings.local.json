@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude_ai_AirUI__search_docs",
+      "mcp__claude_ai_AirUI__get_doc_page"
+    ]
+  }
+}
