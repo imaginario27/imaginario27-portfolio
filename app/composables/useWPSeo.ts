@@ -1,20 +1,26 @@
-export const useWPSeo = (seo: WPSeoData | null | undefined, fallbackTitle?: string) => {
+export const useWPSeo = (
+    seo: MaybeRefOrGetter<WPSeoData | null | undefined>,
+    fallbackTitle?: MaybeRefOrGetter<string | null | undefined>,
+) => {
+    const get = () => toValue(seo)
+
     useSeoMeta({
-        title: seo?.title ?? fallbackTitle,
-        description: seo?.metaDesc ?? undefined,
+        title: () => get()?.title ?? toValue(fallbackTitle) ?? undefined,
+        description: () => get()?.metaDesc ?? undefined,
 
-        ogTitle: seo?.opengraphTitle ?? undefined,
-        ogDescription: seo?.opengraphDescription ?? undefined,
-        ogImage: seo?.opengraphImage?.sourceUrl ?? undefined,
+        ogTitle: () => get()?.opengraphTitle ?? undefined,
+        ogDescription: () => get()?.opengraphDescription ?? undefined,
+        ogImage: () => get()?.opengraphImage?.sourceUrl ?? undefined,
 
-        twitterTitle: seo?.twitterTitle ?? undefined,
-        twitterDescription: seo?.twitterDescription ?? undefined,
-        twitterImage: seo?.twitterImage?.sourceUrl ?? undefined,
+        twitterTitle: () => get()?.twitterTitle ?? undefined,
+        twitterDescription: () => get()?.twitterDescription ?? undefined,
+        twitterImage: () => get()?.twitterImage?.sourceUrl ?? undefined,
     })
 
     useHead({
-        link: seo?.canonical
-            ? [{ rel: 'canonical', href: seo.canonical }]
-            : []
+        link: () => {
+            const canonical = get()?.canonical
+            return canonical ? [{ rel: 'canonical', href: canonical }] : []
+        },
     })
 }

@@ -1,0 +1,20 @@
+query GetProjectSEO($slug: ID!) {
+    project(id: $slug, idType: URI) {
+        title
+        seo {
+            title
+            metaDesc
+            canonical
+            opengraphTitle
+            opengraphDescription
+            opengraphImage {
+                sourceUrl
+            }
+            twitterTitle
+            twitterDescription
+            twitterImage {
+                sourceUrl
+            }
+        }
+    }
+}
