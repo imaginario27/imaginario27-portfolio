@@ -10,7 +10,9 @@
     "postinstall": "nuxt prepare",
     "generate-theme": "ts-node app/scripts/generate-theme.ts",
     "update-theme-colors": "ts-node app/scripts/update-ui-theme-colors.ts",
-    "update-design-system": "npm i @imaginario27/air-ui-ds@latest @imaginario27/air-ui-utils@latest"
+    "update-design-system": "npm i @imaginario27/air-ui-ds@latest @imaginario27/air-ui-utils@latest",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@imaginario27/air-ui-ds": "1.9.4",
@@ -21,6 +23,7 @@
     "@pinia/nuxt": "0.11.3",
     "@tailwindcss/vite": "4.2.2",
     "@vueuse/core": "14.2.1",
+    "@vueuse/motion": "3.0.3",
     "@vueuse/nuxt": "14.2.1",
     "better-sqlite3": "12.8.0",
     "nuxt": "4.4.2",

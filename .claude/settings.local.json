@@ -1,8 +1,6 @@
 {
-  "permissions": {
-    "allow": [
-      "mcp__claude_ai_AirUI__search_docs",
-      "mcp__claude_ai_AirUI__get_doc_page"
-    ]
-  }
+    "model": "claude-opus-4-6",
+    "permissions": {
+        "allow": ["mcp__claude_ai_AirUI__search_docs", "mcp__claude_ai_AirUI__get_doc_page", "Bash(npx vue-tsc *)"]
+    }
 }
