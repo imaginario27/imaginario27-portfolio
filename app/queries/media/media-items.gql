@@ -1,0 +1,17 @@
+query GalleryMediaItems($ids: [ID]) {
+    mediaItems(where: { in: $ids }, first: 200) {
+        nodes {
+            id
+            databaseId
+            sourceUrl
+            altText
+            caption
+            title
+            date
+            mediaDetails {
+                width
+                height
+            }
+        }
+    }
+}

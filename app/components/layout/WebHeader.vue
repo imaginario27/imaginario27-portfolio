@@ -9,7 +9,7 @@
             <AppLogo
                 :src="isDark ? logoDark : logoLight"
                 :to="localePath('/')"
-                logoClass="min-w-[84px]!"
+                logoClass="min-w-[180px]!"
             />
         </template>
 
@@ -34,8 +34,8 @@
 <script setup lang="ts">
 // Imports
 import { MenuLocationEnum } from "#gql/default"
-import logoLight from "~~/public/images/logo/air-ui-logo-color.svg?raw"
-import logoDark from "~~/public/images/logo/air-ui-logo-white.svg?raw"
+import logoLight from "~~/public/images/logo/imaginario27-logo-color.svg?raw"
+import logoDark from "~~/public/images/logo/imaginario27-logo-outline-white.svg?raw"
 
 // Props
 defineProps({

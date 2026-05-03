@@ -6,7 +6,7 @@ When an element has **more than 3 classes OR more than 3 attributes**, put each 
 
 ```vue
 <!-- ≤ 3 classes, ≤ 3 attrs → single line is fine -->
-<span :class="['text-text-subtle', 'text-sm']">…</span>
+<span class="text-text-subtle text-sm">…</span>
 
 <!-- > 3 classes → one per line -->
 <div
