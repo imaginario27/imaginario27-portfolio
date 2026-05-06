@@ -12,7 +12,10 @@
     "update-theme-colors": "ts-node app/scripts/update-ui-theme-colors.ts",
     "update-design-system": "npm i @imaginario27/air-ui-ds@latest @imaginario27/air-ui-utils@latest",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "sync-translations": "ts-node app/scripts/sync-translations.ts",
+    "sync-translations:migrate": "ts-node app/scripts/sync-translations.ts --migrate",
+    "apply-translations": "ts-node app/scripts/apply-translations.ts"
   },
   "dependencies": {
     "@imaginario27/air-ui-ds": "1.9.4",

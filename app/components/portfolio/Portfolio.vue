@@ -4,7 +4,7 @@
             v-if="showFilter"
             :id="`${id}-filter`"
             :modelValue="filterValue"
-            :options="filterOptions"
+            :options="computedFilterOptions"
             :isMultiple="filterIsMultiple"
             :hasAllButton="filterHasAllButton"
             :allButtonText="filterAllText"
@@ -44,17 +44,19 @@
             class="grid overflow-hidden"
             :style="gridStyle"
         >
-            <GalleryItem
+            <PortfolioItem
                 v-for="image in visibleImages"
                 :key="image.id"
-                :image="image"
+                :item="getPortfolioItem(image.id)"
                 :captionPlacement="captionPlacement"
                 :sizes="gridSizes"
+                :showExcerpt="showExcerpt"
+                :showTaxonomies="showTaxonomies"
+                :taxonomyToShow="taxonomyToShow"
                 :itemClass="['aspect-square', itemClass].filter(Boolean).join(' ')"
                 :imageClass="imageClass"
                 :captionClass="captionClass"
                 :hoverClass="hoverClass"
-                @click="onItemClick"
             />
         </div>
 
@@ -72,12 +74,15 @@
                     marginBottom: rIdx < masonryLayout.rows.length - 1 ? `${gap}px` : '0',
                 }"
             >
-                <GalleryItem
+                <PortfolioItem
                     v-for="(it, i) in row.items"
                     :key="it.image.id"
-                    :image="it.image"
+                    :item="getPortfolioItem(it.image.id)"
                     :captionPlacement="captionPlacement"
                     sizes="50vw"
+                    :showExcerpt="showExcerpt"
+                    :showTaxonomies="showTaxonomies"
+                    :taxonomyToShow="taxonomyToShow"
                     :itemClass="itemClass"
                     :imageClass="imageClass"
                     :captionClass="captionClass"
@@ -87,7 +92,6 @@
                         aspectRatio: `${it.width} / ${it.height}`,
                         marginRight: i < row.items.length - 1 ? `${gap}px` : '0',
                     }"
-                    @click="onItemClick"
                 />
             </div>
         </div>
@@ -123,38 +127,18 @@
             class="h-px w-full"
             aria-hidden="true"
         />
-
-        <!-- Lightbox -->
-        <Lightbox
-            v-if="enableLightbox"
-            :modelValue="lightboxOpen"
-            :images="visibleImages"
-            :initialIndex="lightboxIndex"
-            :lightboxClass="lightboxClass"
-            :sliderClass="sliderClass"
-            @update:modelValue="lightboxOpen = $event"
-        />
     </div>
 </template>
 
 <script setup lang="ts">
-// Props
 const props = defineProps({
     id: {
         type: String as PropType<string>,
-        default: "gallery",
-    },
-    mediaIds: {
-        type: Array as PropType<(string | number)[]>,
-        default: () => [],
+        default: "portfolio",
     },
     items: {
-        type: Array as PropType<GalleryImage[] | null>,
+        type: Array as PropType<PortfolioItem[] | null>,
         default: null,
-    },
-    itemTags: {
-        type: Object as PropType<Record<string, string[]>>,
-        default: () => ({}),
     },
 
     // Layout
@@ -163,16 +147,16 @@ const props = defineProps({
         default: GalleryLayout.GRID,
         validator: (v: GalleryLayout) => Object.values(GalleryLayout).includes(v),
     },
-    columnsSm: { type: Number as PropType<number>, default: 2 },
-    columnsMd: { type: Number as PropType<number>, default: 3 },
-    columnsLg: { type: Number as PropType<number>, default: 4 },
+    columnsSm: { type: Number as PropType<number>, default: 1 },
+    columnsMd: { type: Number as PropType<number>, default: 2 },
+    columnsLg: { type: Number as PropType<number>, default: 3 },
     gap: {
         type: Number as PropType<number>,
-        default: 8,
+        default: 16,
     },
     targetRowHeight: {
         type: Number as PropType<number>,
-        default: 240,
+        default: 280,
     },
     widowAlign: {
         type: String as PropType<GalleryWidowAlign>,
@@ -189,9 +173,13 @@ const props = defineProps({
         type: Boolean as PropType<boolean>,
         default: false,
     },
+    filterTaxonomy: {
+        type: String as PropType<string>,
+        default: "projectCategories",
+    },
     filterOptions: {
-        type: Array as PropType<GalleryFilterOption[]>,
-        default: () => [],
+        type: Array as PropType<GalleryFilterOption[] | null>,
+        default: null,
     },
     filterIsMultiple: {
         type: Boolean as PropType<boolean>,
@@ -206,7 +194,7 @@ const props = defineProps({
         default: "All",
     },
 
-    // Sorting (no UI; configured)
+    // Sorting
     sortBy: {
         type: String as PropType<GallerySortBy>,
         default: GallerySortBy.NONE,
@@ -226,10 +214,18 @@ const props = defineProps({
         default: 0,
     },
 
-    // Lightbox
-    enableLightbox: {
+    // Portfolio-specific display
+    showExcerpt: {
         type: Boolean as PropType<boolean>,
-        default: true,
+        default: false,
+    },
+    showTaxonomies: {
+        type: Boolean as PropType<boolean>,
+        default: false,
+    },
+    taxonomyToShow: {
+        type: String as PropType<string>,
+        default: "projectCategories",
     },
 
     // Copy
@@ -243,7 +239,7 @@ const props = defineProps({
     },
     emptyText: {
         type: String as PropType<string>,
-        default: "No images to show",
+        default: "No projects to show",
     },
 
     // Class API
@@ -254,82 +250,36 @@ const props = defineProps({
     hoverClass: String as PropType<string>,
     filterClass: String as PropType<string>,
     paginationClass: String as PropType<string>,
-    lightboxClass: String as PropType<string>,
-    sliderClass: String as PropType<string>,
 })
 
-// Emits
-const emit = defineEmits<{
-    (e: "select", image: GalleryImage, index: number): void
-}>()
-
-// Media fetching
-const fetchedImages = ref<GalleryImage[]>([])
-const pending = ref(false)
-
-const fetchMedia = async () => {
-    if (props.items) {
-        fetchedImages.value = props.items
-        return
-    }
-    if (!props.mediaIds.length) {
-        fetchedImages.value = []
-        return
-    }
-    pending.value = true
-    try {
-        const ids = props.mediaIds.map(String)
-        const { data } = await useAsyncGql({
-            operation: "GalleryMediaItems",
-            variables: { ids },
-        })
-        const nodes = (data.value?.mediaItems?.nodes ?? []) as Array<{
-            id: string
-            databaseId?: number | null
-            sourceUrl?: string | null
-            altText?: string | null
-            caption?: string | null
-            title?: string | null
-            mediaDetails?: { width?: number | null; height?: number | null } | null
-        }>
-
-        // Preserve the order of mediaIds
-        const byId = new Map<string, GalleryImage>()
-        nodes.forEach((n) => {
-            const key = String(n.databaseId ?? n.id)
-            byId.set(key, {
-                id: key,
-                src: n.sourceUrl ?? "",
-                alt: n.altText ?? n.title ?? "",
-                caption: stripHtml(n.caption ?? null) || null,
-                width: n.mediaDetails?.width ?? 0,
-                height: n.mediaDetails?.height ?? 0,
-                tags: props.itemTags[key],
-            })
-        })
-
-        fetchedImages.value = ids
-            .map((id) => byId.get(id))
-            .filter((x): x is GalleryImage => Boolean(x && x.src && x.width && x.height))
-    } finally {
-        pending.value = false
-    }
-}
-
-const stripHtml = (html: string | null) => {
-    if (!html) return ""
-    return html.replace(/<[^>]+>/g, "").trim()
-}
+const {
+    pending,
+    setItems,
+    fetchProjects,
+    buildFilterOptions,
+    imagesWithTags,
+    itemsByImageId,
+} = usePortfolioData()
 
 watch(
-    () => [props.mediaIds, props.items],
-    () => {
-        fetchMedia()
+    () => props.items,
+    (val) => {
+        if (val) {
+            setItems(val)
+        } else {
+            fetchProjects()
+        }
     },
     { immediate: true, deep: true }
 )
 
-// Layout composable
+const layoutImages = imagesWithTags(props.filterTaxonomy)
+
+const computedFilterOptions = computed(() => {
+    if (props.filterOptions) return props.filterOptions
+    return buildFilterOptions(props.filterTaxonomy)
+})
+
 const {
     filterValue,
     onFilterChange,
@@ -347,7 +297,7 @@ const {
     rowJustifyClass,
     sentinelEl,
 } = useGalleryLayout({
-    items: fetchedImages,
+    items: layoutImages,
     showFilter: computed(() => props.showFilter),
     filterIsMultiple: computed(() => props.filterIsMultiple),
     filterHasAllButton: computed(() => props.filterHasAllButton),
@@ -364,16 +314,15 @@ const {
     widowAlign: computed(() => props.widowAlign),
 })
 
-// Lightbox
-const lightboxOpen = ref(false)
-const lightboxIndex = ref(0)
-
-const onItemClick = (image: GalleryImage) => {
-    const idx = visibleImages.value.findIndex((i) => i.id === image.id)
-    emit("select", image, idx >= 0 ? idx : 0)
-    if (props.enableLightbox) {
-        lightboxIndex.value = idx >= 0 ? idx : 0
-        lightboxOpen.value = true
+const getPortfolioItem = (imageId: string): PortfolioItem => {
+    return itemsByImageId.value.get(imageId) ?? {
+        id: imageId,
+        title: "",
+        slug: "",
+        url: "/",
+        excerpt: null,
+        featuredImage: { id: imageId, src: "", alt: "", width: 0, height: 0 },
+        taxonomies: {},
     }
 }
 </script>

@@ -2,5 +2,22 @@
     "model": "claude-opus-4-6",
     "permissions": {
         "allow": ["mcp__claude_ai_AirUI__search_docs", "mcp__claude_ai_AirUI__get_doc_page", "Bash(npx vue-tsc *)"]
-    }
+    },
+    "env": {
+        "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75",
+        "BASH_MAX_OUTPUT_LENGTH": "150000"
+    },
+    "deny": [
+        "Read(./node_modules/**)",
+        "Read(./dist/**)",
+        "Read(./.nuxt/**)",
+        "Read(./.claude/**)",
+        "Read(./.git/**)",
+        "Read(./.vscode/**)",
+        "Read(./.idea/**)",
+        "Read(./.DS_Store)",
+        "Read(./*.log)",
+        "Read(./*.lock)",
+        "Read(./*.env)"
+    ]
 }
