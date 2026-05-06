@@ -56,7 +56,7 @@ function hasI18nUsage(content: string): boolean {
         /const\s+t\s*=/.test(content)
 }
 
-function extractKeys(content: string, filePath: string): string[] {
+function extractKeys(content: string, _filePath: string): string[] {
     const keys: string[] = []
     const hasDirectT = hasI18nUsage(content)
 
