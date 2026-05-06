@@ -1,0 +1,62 @@
+query ProjectsList($first: Int, $after: String, $language: String) {
+    projects(first: $first, after: $after, where: { language: $language }) {
+        nodes {
+            id
+            databaseId
+            title
+            slug
+            uri
+            excerpt
+            featuredImage {
+                node {
+                    sourceUrl
+                    altText
+                    mediaDetails {
+                        width
+                        height
+                    }
+                }
+            }
+            projectCategories {
+                nodes {
+                    slug
+                    name
+                }
+            }
+            projectTags {
+                nodes {
+                    slug
+                    name
+                }
+            }
+            tecnologias {
+                nodes {
+                    slug
+                    name
+                }
+            }
+            formatos {
+                nodes {
+                    slug
+                    name
+                }
+            }
+            clientes {
+                nodes {
+                    slug
+                    name
+                }
+            }
+            tiposSeleccion {
+                nodes {
+                    slug
+                    name
+                }
+            }
+        }
+        pageInfo {
+            hasNextPage
+            endCursor
+        }
+    }
+}

@@ -13,7 +13,7 @@
         v-model="selectedTheme"
         :buttons="themeToggleButtons"
         :hasButtonBorder="false"
-        :label="showLabel ? (label ? label : $t('Theme')) : undefined"
+        :label="showLabel ? (label ? label : $t('Tema')) : undefined"
         :class="customClass"
     />
 </template>

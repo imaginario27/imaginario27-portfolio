@@ -1,0 +1,17 @@
+{
+    "mainLanguage": "es",
+    "languages": ["es", "en", "de"],
+    "scanDirs": [
+        "app/components",
+        "app/pages",
+        "app/layouts",
+        "app/plugins",
+        "app/middlewares",
+        "app/server",
+        "app/composables",
+        "app/stores"
+    ],
+    "fileExtensions": ["vue", "ts"],
+    "localesDir": "i18n/locales",
+    "missingFile": "i18n/locales/missing-translations.json"
+}
