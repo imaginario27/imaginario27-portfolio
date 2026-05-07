@@ -1,19 +1,25 @@
 <template>
-    <div ref="containerRef" :style="{ position: 'relative', width, height, overflow: 'hidden' }">
-        <canvas ref="canvasRef" :style="{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            display: 'block',
-            zIndex: 1,
-        }" />
+    <div
+        ref="containerRef"
+        :style="{ position: 'relative', width, height, overflow: 'hidden' }"
+    >
+        <canvas
+            ref="canvasRef"
+            :style="{
+                position: 'absolute',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                display: 'block',
+                zIndex: 1,
+            }"
+        />
     </div>
 </template>
 
 <script setup>
 // Imports
-import * as THREE from 'three';
+import * as THREE from 'three'
 
 // Props
 const props = defineProps({
@@ -22,32 +28,31 @@ const props = defineProps({
     cameraZ: { type: Number, default: 125 },
     planeSize: { type: Number, default: 256 },
     speed: { type: Number, default: 0.5 },
-});
+})
 
 // States
-const canvasRef = ref(null);
-const containerRef = ref(null);
+const canvasRef = ref(null)
+const containerRef = ref(null)
 
 // Stores
 const themeStore = useThemeStore()
 const { isDark } = storeToRefs(themeStore)
 
-
 // Lifecycle
-let animationId = null;
-let resizeHandler = null;
+let animationId = null
+let resizeHandler = null
 
 onMounted(() => {
-    const { cameraZ, planeSize, speed } = props;
+    const { cameraZ, planeSize, speed } = props
 
     class Plane {
         constructor() {
             this.uniforms = {
                 time: { type: 'f', value: 0 },
                 uColor: { value: new THREE.Color(isDark.value ? 0xffffff : 0x000000) },
-            };
-            this.mesh = this.createMesh();
-            this.time = speed;
+            }
+            this.mesh = this.createMesh()
+            this.time = speed
         }
 
         createMesh() {
@@ -146,63 +151,63 @@ onMounted(() => {
             }
           `,
                     transparent: true,
-                })
-            );
+                }),
+            )
         }
 
         render(time) {
-            this.uniforms.time.value += time * this.time;
+            this.uniforms.time.value += time * this.time
         }
     }
 
-    const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.value, antialias: false, alpha: true });
-    const scene = new THREE.Scene();
-    const container = containerRef.value;
-    const initW = container?.clientWidth || 1;
-    const initH = container?.clientHeight || 1;
-    const camera = new THREE.PerspectiveCamera(45, initW / initH, 1, 10000);
-    const clock = new THREE.Clock();
-    const plane = new Plane();
+    const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.value, antialias: false, alpha: true })
+    const scene = new THREE.Scene()
+    const container = containerRef.value
+    const initW = container?.clientWidth || 1
+    const initH = container?.clientHeight || 1
+    const camera = new THREE.PerspectiveCamera(45, initW / initH, 1, 10000)
+    const clock = new THREE.Clock()
+    const plane = new Plane()
 
     const resize = () => {
-        const container = containerRef.value;
-        if (!container) return;
-        const w = container.clientWidth;
-        const h = container.clientHeight;
-        camera.aspect = w / h;
-        camera.updateProjectionMatrix();
-        renderer.setSize(w, h, false);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    };
+        const container = containerRef.value
+        if (!container) return
+        const w = container.clientWidth
+        const h = container.clientHeight
+        camera.aspect = w / h
+        camera.updateProjectionMatrix()
+        renderer.setSize(w, h, false)
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    }
 
     const renderLoop = () => {
-        plane.render(clock.getDelta());
-        renderer.render(scene, camera);
-        animationId = requestAnimationFrame(renderLoop);
-    };
+        plane.render(clock.getDelta())
+        renderer.render(scene, camera)
+        animationId = requestAnimationFrame(renderLoop)
+    }
 
-    renderer.setSize(initW, initH, false);
-    renderer.setClearColor(0x000000, 0);
-    camera.position.set(0, 16, cameraZ);
-    camera.lookAt(new THREE.Vector3(0, 28, 0));
-    scene.add(plane.mesh);
+    renderer.setSize(initW, initH, false)
+    renderer.setClearColor(0x000000, 0)
+    camera.position.set(0, 16, cameraZ)
+    camera.lookAt(new THREE.Vector3(0, 28, 0))
+    scene.add(plane.mesh)
 
-    resizeHandler = resize;
-    window.addEventListener('resize', resizeHandler);
-    const ro = new ResizeObserver(resize);
-    if (container) ro.observe(container);
-    resize();
-    renderLoop();
+    resizeHandler = resize
+    window.addEventListener('resize', resizeHandler)
+    const ro = new ResizeObserver(resize)
+    if (container) ro.observe(container)
+    resize()
+    renderLoop()
 
-    onUnmounted(() => ro.disconnect());
+    onUnmounted(() => ro.disconnect())
 
     watch(isDark, (dark) => {
-        plane.uniforms.uColor.value.setHex(dark ? 0xffffff : 0x000000);
-    });
-});
+        plane.uniforms.uColor.value.setHex(dark ? 0xffffff : 0x000000)
+    })
+})
 
 onUnmounted(() => {
-    if (animationId) cancelAnimationFrame(animationId);
-    if (resizeHandler) window.removeEventListener('resize', resizeHandler);
-});
+    if (animationId) cancelAnimationFrame(animationId)
+    if (resizeHandler) window.removeEventListener('resize', resizeHandler)
+})
 </script>

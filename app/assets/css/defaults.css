@@ -1,6 +1,5 @@
-
 html {
-  scroll-behavior: smooth;
+    scroll-behavior: smooth;
 }
 
 body {
@@ -19,10 +18,11 @@ body.modal-open {
 
 aside {
     nav {
-        .router-link-active, .router-link-active svg {
+        .router-link-active,
+        .router-link-active svg {
             color: var(--color-text-primary-brand-on-neutral-hover-bg);
         }
-        
+
         .router-link-active {
             background: var(--color-background-neutral-hover);
         }
@@ -34,7 +34,7 @@ aside {
     height: auto;
 }
 
-a:hover, 
+a:hover,
 button:hover {
     cursor: pointer;
 }
@@ -46,10 +46,10 @@ button:disabled {
 
 /* DROPZONE */
 .custom-dropzone-preview-wrapper .dropzone-wrapper {
-    border: none!important;
-    padding: 0!important;
+    border: none !important;
+    padding: 0 !important;
 }
 
 .vue3-toastify__toast-container {
-    z-index: 99999 !important; 
+    z-index: 99999 !important;
 }

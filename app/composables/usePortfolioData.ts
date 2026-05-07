@@ -1,15 +1,8 @@
-const TAXONOMY_KEYS = [
-    "projectCategories",
-    "projectTags",
-    "tecnologias",
-    "formatos",
-    "clientes",
-    "tiposSeleccion",
-] as const
+const TAXONOMY_KEYS = ['projectCategories', 'projectTags', 'tecnologias', 'formatos', 'clientes', 'tiposSeleccion'] as const
 
 const stripHtml = (html: string | null | undefined) => {
-    if (!html) return ""
-    return html.replace(/<[^>]+>/g, "").trim()
+    if (!html) return ''
+    return html.replace(/<[^>]+>/g, '').trim()
 }
 
 const mapNodeToPortfolioItem = (node: ProjectNode): PortfolioItem | null => {
@@ -30,14 +23,14 @@ const mapNodeToPortfolioItem = (node: ProjectNode): PortfolioItem | null => {
 
     return {
         id,
-        title: node.title ?? "",
-        slug: node.slug ?? "",
-        url: node.uri ?? `/${node.slug ?? ""}`,
+        title: node.title ?? '',
+        slug: node.slug ?? '',
+        url: node.uri ?? `/${node.slug ?? ''}`,
         excerpt: stripHtml(node.excerpt) || null,
         featuredImage: {
             id,
             src: img.sourceUrl,
-            alt: img.altText ?? node.title ?? "",
+            alt: img.altText ?? node.title ?? '',
             width: img.mediaDetails.width,
             height: img.mediaDetails.height,
         },
@@ -57,16 +50,14 @@ export const usePortfolioData = () => {
         pending.value = true
         try {
             const { data } = await useAsyncGql({
-                operation: "ProjectsList",
+                operation: 'ProjectsList',
                 variables: {
                     first: variables?.first ?? 100,
                     language: variables?.language,
                 },
             })
             const nodes = (data.value?.projects?.nodes ?? []) as ProjectNode[]
-            items.value = nodes
-                .map(mapNodeToPortfolioItem)
-                .filter((x): x is PortfolioItem => x !== null)
+            items.value = nodes.map(mapNodeToPortfolioItem).filter((x): x is PortfolioItem => x !== null)
         } finally {
             pending.value = false
         }
@@ -93,7 +84,7 @@ export const usePortfolioData = () => {
             items.value.map((p) => ({
                 ...p.featuredImage,
                 tags: (p.taxonomies[taxonomyKey] ?? []).map((t) => t.slug),
-            }))
+            })),
         )
 
     const itemsByImageId = computed(() => {

@@ -31,17 +31,7 @@
                 @keydown.left.prevent="prev"
                 @keydown.right.prevent="next"
             >
-                <div
-                    :class="[
-                        'flex',
-                        'w-full',
-                        'items-center',
-                        'justify-between',
-                        'px-4',
-                        'py-3',
-                        'pointer-events-auto',
-                    ]"
-                >
+                <div :class="['flex', 'w-full', 'items-center', 'justify-between', 'px-4', 'py-3', 'pointer-events-auto']">
                     <span
                         v-if="images.length > 1"
                         class="text-sm text-white/80"
@@ -133,14 +123,7 @@
                     <button
                         v-if="images.length > 1"
                         type="button"
-                        :class="[
-                            'absolute',
-                            'top-1/2',
-                            'left-2',
-                            '-translate-y-1/2',
-                            'md:left-4',
-                            navButtonClass,
-                        ]"
+                        :class="['absolute', 'top-1/2', 'left-2', '-translate-y-1/2', 'md:left-4', navButtonClass]"
                         :aria-label="prevLabel"
                         @click="prev"
                     >
@@ -153,14 +136,7 @@
                     <button
                         v-if="images.length > 1"
                         type="button"
-                        :class="[
-                            'absolute',
-                            'top-1/2',
-                            'right-2',
-                            '-translate-y-1/2',
-                            'md:right-4',
-                            navButtonClass,
-                        ]"
+                        :class="['absolute', 'top-1/2', 'right-2', '-translate-y-1/2', 'md:right-4', navButtonClass]"
                         :aria-label="nextLabel"
                         @click="next"
                     >
@@ -173,14 +149,7 @@
 
                 <div
                     v-if="showCaption && current?.caption"
-                    :class="[
-                        'px-4',
-                        'pb-4',
-                        'pt-2',
-                        'text-center',
-                        'text-sm',
-                        'text-white/80',
-                    ]"
+                    :class="['px-4', 'pb-4', 'pt-2', 'text-center', 'text-sm', 'text-white/80']"
                 >
                     {{ current.caption }}
                 </div>
@@ -214,23 +183,23 @@ const props = defineProps({
     },
     ariaLabel: {
         type: String as PropType<string>,
-        default: "Image lightbox",
+        default: 'Image lightbox',
     },
     prevLabel: {
         type: String as PropType<string>,
-        default: "Previous image",
+        default: 'Previous image',
     },
     nextLabel: {
         type: String as PropType<string>,
-        default: "Next image",
+        default: 'Next image',
     },
     closeLabel: {
         type: String as PropType<string>,
-        default: "Close lightbox",
+        default: 'Close lightbox',
     },
     fullscreenLabel: {
         type: String as PropType<string>,
-        default: "Toggle fullscreen",
+        default: 'Toggle fullscreen',
     },
     closeOnClickOutside: {
         type: Boolean as PropType<boolean>,
@@ -242,9 +211,9 @@ const props = defineProps({
 
 // Emits
 const emit = defineEmits<{
-    (e: "update:modelValue", value: boolean): void
-    (e: "update:index", index: number): void
-    (e: "close"): void
+    (e: 'update:modelValue', value: boolean): void
+    (e: 'update:index', index: number): void
+    (e: 'close'): void
 }>()
 
 // States
@@ -276,7 +245,7 @@ watch(
     () => props.initialIndex,
     (v) => {
         currentIndex.value = v
-    }
+    },
 )
 
 watch(
@@ -289,7 +258,7 @@ watch(
         } else {
             unlockScroll()
         }
-    }
+    },
 )
 
 // Lifecycle
@@ -304,20 +273,18 @@ const current = computed(() => props.images[currentIndex.value])
 const setIndex = (i: number) => {
     const len = props.images.length
     if (!len) return
-    const idx = props.loop
-        ? ((i % len) + len) % len
-        : Math.max(0, Math.min(len - 1, i))
+    const idx = props.loop ? ((i % len) + len) % len : Math.max(0, Math.min(len - 1, i))
     if (idx === currentIndex.value) return
     currentIndex.value = idx
-    emit("update:index", idx)
+    emit('update:index', idx)
 }
 
 const next = () => {
-    slideDirection.value = "left"
+    slideDirection.value = 'left'
     setIndex(currentIndex.value + 1)
 }
 const prev = () => {
-    slideDirection.value = "right"
+    slideDirection.value = 'right'
     setIndex(currentIndex.value - 1)
 }
 
@@ -326,26 +293,18 @@ const SWIPE_THRESHOLD = 40
 const swipeAreaEl = ref<HTMLElement | null>(null)
 const isDragging = ref(false)
 const dragOffsetX = ref(0)
-const slideDirection = ref<"left" | "right">("left")
+const slideDirection = ref<'left' | 'right'>('left')
 let startX = 0
 let startY = 0
 let pointerId: number | null = null
 let wasInteracting = false
 
-const slideEnterActive = "transition-all duration-250 ease-out motion-reduce:transition-none"
-const slideLeaveActive = "transition-all duration-200 ease-in motion-reduce:transition-none"
+const slideEnterActive = 'transition-all duration-250 ease-out motion-reduce:transition-none'
+const slideLeaveActive = 'transition-all duration-200 ease-in motion-reduce:transition-none'
 
-const slideEnterFrom = computed(() =>
-    slideDirection.value === "left"
-        ? "translate-x-24 opacity-0"
-        : "-translate-x-24 opacity-0"
-)
+const slideEnterFrom = computed(() => (slideDirection.value === 'left' ? 'translate-x-24 opacity-0' : '-translate-x-24 opacity-0'))
 
-const slideLeaveTo = computed(() =>
-    slideDirection.value === "left"
-        ? "-translate-x-24 opacity-0"
-        : "translate-x-24 opacity-0"
-)
+const slideLeaveTo = computed(() => (slideDirection.value === 'left' ? '-translate-x-24 opacity-0' : 'translate-x-24 opacity-0'))
 
 const slideOffsetStyle = computed(() => {
     if (!dragOffsetX.value) return undefined
@@ -354,7 +313,7 @@ const slideOffsetStyle = computed(() => {
 
 // Swipe event handlers
 const onPointerDown = (e: PointerEvent) => {
-    if ((e.target as HTMLElement).closest("button")) return
+    if ((e.target as HTMLElement).closest('button')) return
     isDragging.value = true
     wasInteracting = false
     startX = e.clientX
@@ -382,10 +341,10 @@ const onPointerUp = (e: PointerEvent) => {
     if (Math.abs(dragOffsetX.value) > SWIPE_THRESHOLD && props.images.length > 1) {
         wasInteracting = true
         if (dragOffsetX.value < 0) {
-            slideDirection.value = "left"
+            slideDirection.value = 'left'
             next()
         } else {
-            slideDirection.value = "right"
+            slideDirection.value = 'right'
             prev()
         }
     }
@@ -406,27 +365,27 @@ const onOverlayClick = () => {
 }
 
 const close = () => {
-    emit("update:modelValue", false)
-    emit("close")
+    emit('update:modelValue', false)
+    emit('close')
 }
 
-let savedOverflow = ""
+let savedOverflow = ''
 
 // Scroll handling
 const lockScroll = () => {
-    if (typeof document === "undefined") return
+    if (typeof document === 'undefined') return
     savedOverflow = document.body.style.overflow
-    document.body.style.overflow = "hidden"
+    document.body.style.overflow = 'hidden'
 }
 
 const unlockScroll = () => {
-    if (typeof document === "undefined") return
+    if (typeof document === 'undefined') return
     document.body.style.overflow = savedOverflow
 }
 
 // Fullscreen handling
 const toggleFullscreen = async () => {
-    if (typeof document === "undefined") return
+    if (typeof document === 'undefined') return
     if (document.fullscreenElement) {
         await document.exitFullscreen()
         isFullscreen.value = false

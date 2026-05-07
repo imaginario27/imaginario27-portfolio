@@ -1,16 +1,14 @@
-import { defineVitestConfig } from "@nuxt/test-utils/config"
+import { defineVitestConfig } from '@nuxt/test-utils/config'
 
 export default defineVitestConfig({
     test: {
-        environment: "nuxt",
+        environment: 'nuxt',
         coverage: {
-            provider: "v8",
-            reportsDirectory: "tests/.coverage",
-            reporter: ["text", "html"],
+            provider: 'v8',
+            reportsDirectory: 'tests/.coverage',
+            reporter: ['text', 'html'],
         },
         globals: true,
-        include: [
-            "tests/**/*.test.ts",
-        ],
+        include: ['tests/**/*.test.ts'],
     },
 })

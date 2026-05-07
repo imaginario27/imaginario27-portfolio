@@ -13,25 +13,25 @@ This is **not** a monorepo. There are no `packages/` or `docs/` folders, no Chan
 
 ## Project map
 
-| Path | Purpose |
-|---|---|
-| [app/components/](app/components/) | App-specific components (`pathPrefix: false`, auto-imported). Categories: `hero-animations/`, `layout/`, `toggles/` |
-| [app/layouts/](app/layouts/) | `default.vue` |
-| [app/pages/](app/pages/) | Routes (`index.vue`, `graphql-test.vue`) |
-| [app/stores/](app/stores/) | Pinia stores (`useLanguageStore`, `useThemeStore`) |
-| [app/composables/](app/composables/) | App-only composables (e.g. `useWPSeo`) |
-| [app/models/](app/models/) | `enums/`, `types/` — auto-imported via `imports.dirs: ["models/**"]` |
-| [app/queries/](app/queries/) | `.gql` files consumed by `nuxt-graphql-client` |
-| [app/extend/queries/](app/extend/queries/) | GraphQL extensions / fragments |
-| [app/assets/css/](app/assets/css/) | `main.css` (Tailwind v4 `@theme`), `theme/` (primitives → colors → ui-theme), `defaults.css` |
-| [app/scripts/](app/scripts/) | `generate-theme.ts`, `update-ui-theme-colors.ts` (ts-node) |
-| [app/plugins/](app/plugins/) | `vue3-toastify.ts` |
-| [i18n/locales/](i18n/locales/) | `es.json`, `en.json`, `de.json` |
-| [server/api/](server/api/) | Nitro API routes |
-| [content/](content/) | `@nuxt/content` collection |
-| [public/](public/) | Static assets (incl. `images/logo/`) |
-| [tests/](tests/) | Vitest specs (mirrors `app/` paths — e.g. `app/components/layout/WebHeader.vue` → `tests/components/layout/WebHeader.test.ts`) |
-| [nuxt.config.ts](nuxt.config.ts) | Extends both DS packages as Nuxt layers, registers modules, i18n, Tailwind Vite plugin |
+| Path                                       | Purpose                                                                                                                        |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| [app/components/](app/components/)         | App-specific components (`pathPrefix: false`, auto-imported). Categories: `hero-animations/`, `layout/`, `toggles/`            |
+| [app/layouts/](app/layouts/)               | `default.vue`                                                                                                                  |
+| [app/pages/](app/pages/)                   | Routes (`index.vue`, `graphql-test.vue`)                                                                                       |
+| [app/stores/](app/stores/)                 | Pinia stores (`useLanguageStore`, `useThemeStore`)                                                                             |
+| [app/composables/](app/composables/)       | App-only composables (e.g. `useWPSeo`)                                                                                         |
+| [app/models/](app/models/)                 | `enums/`, `types/` — auto-imported via `imports.dirs: ["models/**"]`                                                           |
+| [app/queries/](app/queries/)               | `.gql` files consumed by `nuxt-graphql-client`                                                                                 |
+| [app/extend/queries/](app/extend/queries/) | GraphQL extensions / fragments                                                                                                 |
+| [app/assets/css/](app/assets/css/)         | `main.css` (Tailwind v4 `@theme`), `theme/` (primitives → colors → ui-theme), `defaults.css`                                   |
+| [app/scripts/](app/scripts/)               | `generate-theme.ts`, `update-ui-theme-colors.ts` (ts-node)                                                                     |
+| [app/plugins/](app/plugins/)               | `vue3-toastify.ts`                                                                                                             |
+| [i18n/locales/](i18n/locales/)             | `es.json`, `en.json`, `de.json`                                                                                                |
+| [server/api/](server/api/)                 | Nitro API routes                                                                                                               |
+| [content/](content/)                       | `@nuxt/content` collection                                                                                                     |
+| [public/](public/)                         | Static assets (incl. `images/logo/`)                                                                                           |
+| [tests/](tests/)                           | Vitest specs (mirrors `app/` paths — e.g. `app/components/layout/WebHeader.vue` → `tests/components/layout/WebHeader.test.ts`) |
+| [nuxt.config.ts](nuxt.config.ts)           | Extends both DS packages as Nuxt layers, registers modules, i18n, Tailwind Vite plugin                                         |
 
 ## Commands
 
@@ -48,7 +48,7 @@ There is no commitlint/husky/changeset setup in this repo. Use Conventional Comm
 ## How this project uses the design system
 
 - `nuxt.config.ts` contains `extends: ["@imaginario27/air-ui-ds/nuxt.config.ts", "@imaginario27/air-ui-utils/nuxt.config.ts"]`. This makes every DS component, composable, enum, type, and the DS `assets/css/theme/` available via Nuxt auto-import — **no explicit imports needed** for `CompactHeader`, `AppLogo`, `DropdownSelect`, `ActionButton`, `Section`, `SectionBody`, enums like `SelectType` / `ButtonSize` / `ButtonStyleType`, composables like `useIsMobile`, etc. See [app/components/layout/WebHeader.vue](app/components/layout/WebHeader.vue) for a canonical example.
-- **DS-first rule.** Whenever a UI need maps to something AirUI already ships, use the AirUI component. Raw HTML + Tailwind is the fallback *only* when nothing in AirUI fits. This applies to buttons, alerts, cards, accordions, avatars, badges, breadcrumbs, modals, tabs, tables, form fields, sections, heroes, etc. — see the MCP workflow below.
+- **DS-first rule.** Whenever a UI need maps to something AirUI already ships, use the AirUI component. Raw HTML + Tailwind is the fallback _only_ when nothing in AirUI fits. This applies to buttons, alerts, cards, accordions, avatars, badges, breadcrumbs, modals, tabs, tables, form fields, sections, heroes, etc. — see the MCP workflow below.
 - **Do not** reach into `node_modules/@imaginario27/...` with relative imports. Rely on auto-import via layers.
 - **Do not** copy DS components into this repo. If a DS component is missing a feature, flag it — the fix belongs in the DS repo, not here.
 - Theme CSS is duplicated locally under [app/assets/css/theme/](app/assets/css/theme/) so it can be regenerated via `generate-theme` / `update-theme-colors` scripts. Tokens are declared under `@theme { … }` in [app/assets/css/main.css](app/assets/css/main.css). Tailwind v4 — there is no `tailwind.config.*`.
@@ -57,11 +57,11 @@ There is no commitlint/husky/changeset setup in this repo. Use Conventional Comm
 
 This project has the AirUI docs MCP server wired in (`claude_ai_AirUI`). Use it **before** hand-rolling any component — it's the authoritative list of what AirUI exposes, the prop/enum surface, and usage examples. Tools:
 
-| Tool | When to call |
-|---|---|
-| `mcp__claude_ai_AirUI__list_doc_pages` | Get an overview of all available components & blocks (paths like `/docs/components/<name>`, `/docs/blocks/<name>`) |
-| `mcp__claude_ai_AirUI__search_docs` | Keyword search (e.g. `"button"`, `"section"`, `"card"`, `"accordion"`, `"hero"`) to find the right page |
-| `mcp__claude_ai_AirUI__get_doc_page` | Read the full page with props, enums, and MDC examples (pass a `path` from the list/search result). **Can return large payloads** — some pages exceed the per-call token cap and get spilled to a tool-results file that must be chunk-read. Only call it when you actually need the full prop/enum table. |
+| Tool                                   | When to call                                                                                                                                                                                                                                                                                               |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `mcp__claude_ai_AirUI__list_doc_pages` | Get an overview of all available components & blocks (paths like `/docs/components/<name>`, `/docs/blocks/<name>`)                                                                                                                                                                                         |
+| `mcp__claude_ai_AirUI__search_docs`    | Keyword search (e.g. `"button"`, `"section"`, `"card"`, `"accordion"`, `"hero"`) to find the right page                                                                                                                                                                                                    |
+| `mcp__claude_ai_AirUI__get_doc_page`   | Read the full page with props, enums, and MDC examples (pass a `path` from the list/search result). **Can return large payloads** — some pages exceed the per-call token cap and get spilled to a tool-results file that must be chunk-read. Only call it when you actually need the full prop/enum table. |
 
 **Cost-saving heuristic:** lead with `search_docs` — the returned title + path is often enough to pick the right component by name. Reserve `get_doc_page` for moments when you need to know prop names, enum values, or slot structure and can't infer them from existing usage in this repo. When you do call `get_doc_page` and hit the truncation warning, read the saved file in chunks rather than retrying.
 
@@ -87,13 +87,13 @@ Existing consumption already follows this: [app/components/layout/WebHeader.vue]
 1. Create `app/pages/<path>.vue`. Use `definePageMeta({ title, description, layout })` as needed.
 2. For CMS-backed pages, fetch via `useAsyncGql({ operation, variables })` using a query from [app/queries/](app/queries/).
 3. For SEO, use [app/composables/useWPSeo.ts](app/composables/useWPSeo.ts).
-4. Add translations keys in [i18n/locales/*.json](i18n/locales/) for all three locales (es/en/de).
+4. Add translations keys in [i18n/locales/\*.json](i18n/locales/) for all three locales (es/en/de).
 
 ## Common Claude mistakes to avoid
 
 1. Writing `defineProps<{…}>()` with a TS generic. This repo uses runtime `defineProps({ key: { type: … as PropType<T>, default, validator } })` — match [app/components/layout/WebHeader.vue](app/components/layout/WebHeader.vue).
 2. Adding `<style scoped>` blocks. Components are Tailwind utility-first via `:class="[ … ]"` arrays.
-2a. Cramming 4+ classes or 4+ props on a single line. If an element has more than 3 classes **or** more than 3 attributes, break each onto its own line (see GUARDRAILS.md §4a). This is not optional.
+   2a. Cramming 4+ classes or 4+ props on a single line. If an element has more than 3 classes **or** more than 3 attributes, break each onto its own line (see GUARDRAILS.md §4a). This is not optional.
 3. Hardcoding colors (`bg-red-500`, `#fff`). Always use semantic DS tokens (`bg-background-primary-brand-default`, `text-text-neutral-subtle`, `border-border-neutral-subtle`, `text-icon-default`).
 4. Creating a barrel `index.ts`. Nuxt auto-import handles components, composables, and `models/**` — a barrel will duplicate registrations.
 5. Deep-importing from `node_modules/@imaginario27/...` with relative paths. Rely on the layer `extends` — the name is already globally available.

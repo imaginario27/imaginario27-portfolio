@@ -1,12 +1,5 @@
 <template>
-    <div
-        :class="[
-            'relative',
-            'w-full',
-            'h-[calc(100vh-72px)]',
-            'overflow-hidden',
-        ]"
-    >
+    <div :class="['relative', 'w-full', 'h-[calc(100vh-72px)]', 'overflow-hidden']">
         <InfiniteLandscape
             width="100%"
             height="100%"
@@ -15,30 +8,9 @@
             :speed="0.5"
         />
         <div
-            :class="[
-                'absolute',
-                'inset-0',
-                'z-2',
-                'flex',
-                'flex-col',
-                'items-center',
-                'justify-start',
-                'text-center',
-                'px-6',
-                'pt-[18vh]',
-            ]"
+            :class="['absolute', 'inset-0', 'z-2', 'flex', 'flex-col', 'items-center', 'justify-start', 'text-center', 'px-6', 'pt-[18vh]']"
         >
-            <h1
-                :class="[
-                    'm-0',
-                    'font-bold',
-                    'tracking-[-0.03em]',
-                    'text-text-default',
-                    'text-[clamp(2.5rem,8vw,6rem)]',
-                ]"
-            >
-                Imaginario27
-            </h1>
+            <h1 :class="['m-0', 'font-bold', 'tracking-[-0.03em]', 'text-text-default', 'text-[clamp(2.5rem,8vw,6rem)]']">Imaginario27</h1>
 
             <!-- Animated subtitle -->
             <p
@@ -56,7 +28,10 @@
             >
                 Diseño &amp; desarrollo de
                 <span class="relative inline-flex h-[1.4em] items-center overflow-hidden">
-                    <Transition name="word-slide" mode="out-in">
+                    <Transition
+                        name="word-slide"
+                        mode="out-in"
+                    >
                         <span
                             :key="currentExpertise"
                             class="inline-block font-semibold text-text-default whitespace-nowrap"
@@ -67,17 +42,7 @@
                 </span>
             </p>
 
-            <div
-                :class="[
-                    'mt-8',
-                    'flex',
-                    'flex-wrap',
-                    'items-center',
-                    'justify-center',
-                    'gap-3',
-                    'pointer-events-auto',
-                ]"
-            >
+            <div :class="['mt-8', 'flex', 'flex-wrap', 'items-center', 'justify-center', 'gap-3', 'pointer-events-auto']">
                 <ActionButton
                     :size="ButtonSize.XXL"
                     :styleType="ButtonStyleType.PRIMARY_BRAND_FILLED"
@@ -94,12 +59,7 @@
 </template>
 
 <script setup lang="ts">
-const expertise = [
-    'experiencias digitales',
-    'interfaces únicas',
-    'productos web',
-    'identidades visuales',
-]
+const expertise = ['experiencias digitales', 'interfaces únicas', 'productos web', 'identidades visuales']
 
 const index = ref(0)
 const currentExpertise = computed(() => expertise[index.value])

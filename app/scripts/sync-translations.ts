@@ -1,6 +1,6 @@
-import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from "fs"
-import { resolve, join, extname, dirname } from "path"
-import { fileURLToPath } from "url"
+import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from 'fs'
+import { resolve, join, extname, dirname } from 'path'
+import { fileURLToPath } from 'url'
 
 interface TranslationConfig {
     mainLanguage: string
@@ -13,11 +13,9 @@ interface TranslationConfig {
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-const rootDir = resolve(__dirname, "../..")
-const config: TranslationConfig = JSON.parse(
-    readFileSync(resolve(rootDir, "i18n/translation.config.json"), "utf-8")
-)
-const migrateMode = process.argv.includes("--migrate")
+const rootDir = resolve(__dirname, '../..')
+const config: TranslationConfig = JSON.parse(readFileSync(resolve(rootDir, 'i18n/translation.config.json'), 'utf-8'))
+const migrateMode = process.argv.includes('--migrate')
 
 function getAllFiles(dir: string, extensions: string[]): string[] {
     const results: string[] = []
@@ -36,11 +34,11 @@ function getAllFiles(dir: string, extensions: string[]): string[] {
     return results
 }
 
-function flattenObject(obj: Record<string, any>, prefix = ""): Record<string, string> {
+function flattenObject(obj: Record<string, any>, prefix = ''): Record<string, string> {
     const result: Record<string, string> = {}
     for (const key of Object.keys(obj)) {
         const fullKey = prefix ? `${prefix}.${key}` : key
-        if (typeof obj[key] === "object" && obj[key] !== null) {
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
             Object.assign(result, flattenObject(obj[key], fullKey))
         } else {
             result[fullKey] = String(obj[key])
@@ -50,13 +48,10 @@ function flattenObject(obj: Record<string, any>, prefix = ""): Record<string, st
 }
 
 function hasI18nUsage(content: string): boolean {
-    return /\$t\s*\(/.test(content) ||
-        /useI18n/.test(content) ||
-        /const\s*{\s*t\s*[,}]/.test(content) ||
-        /const\s+t\s*=/.test(content)
+    return /\$t\s*\(/.test(content) || /useI18n/.test(content) || /const\s*{\s*t\s*[,}]/.test(content) || /const\s+t\s*=/.test(content)
 }
 
-function extractKeys(content: string, filePath: string): string[] {
+function extractKeys(content: string, _filePath: string): string[] {
     const keys: string[] = []
     const hasDirectT = hasI18nUsage(content)
 
@@ -79,14 +74,14 @@ function extractKeys(content: string, filePath: string): string[] {
 }
 
 function normalizeKey(raw: string): string {
-    return raw.replace(/\s+/g, " ").trim()
+    return raw.replace(/\s+/g, ' ').trim()
 }
 
 function readLocaleFile(lang: string): Record<string, string> {
     const filePath = resolve(rootDir, config.localesDir, `${lang}.json`)
     if (!existsSync(filePath)) return {}
-    const content = JSON.parse(readFileSync(filePath, "utf-8"))
-    if (typeof Object.values(content)[0] === "object") {
+    const content = JSON.parse(readFileSync(filePath, 'utf-8'))
+    if (typeof Object.values(content)[0] === 'object') {
         return flattenObject(content)
     }
     return content
@@ -105,20 +100,20 @@ function migrateSourceFiles(keyMap: Record<string, string>): void {
     let totalReplacements = 0
 
     for (const filePath of files) {
-        let content = readFileSync(filePath, "utf-8")
+        let content = readFileSync(filePath, 'utf-8')
         let modified = false
 
         for (const [nestedKey, spanishValue] of Object.entries(keyMap)) {
             const patterns = [
-                new RegExp(`\\$t\\s*\\(\\s*(['"\`])${escapeRegex(nestedKey)}\\1\\s*\\)`, "g"),
-                new RegExp(`(?<![.\\w$])t\\s*\\(\\s*(['"\`])${escapeRegex(nestedKey)}\\1\\s*\\)`, "g"),
+                new RegExp(`\\$t\\s*\\(\\s*(['"\`])${escapeRegex(nestedKey)}\\1\\s*\\)`, 'g'),
+                new RegExp(`(?<![.\\w$])t\\s*\\(\\s*(['"\`])${escapeRegex(nestedKey)}\\1\\s*\\)`, 'g'),
             ]
 
             for (const pattern of patterns) {
                 const replaced = content.replace(pattern, (fullMatch: string, quote: string) => {
                     modified = true
                     totalReplacements++
-                    const prefix = fullMatch.startsWith("$") ? "$t" : "t"
+                    const prefix = fullMatch.startsWith('$') ? '$t' : 't'
                     return `${prefix}(${quote}${spanishValue}${quote})`
                 })
                 content = replaced
@@ -126,8 +121,8 @@ function migrateSourceFiles(keyMap: Record<string, string>): void {
         }
 
         if (modified) {
-            writeFileSync(filePath, content, "utf-8")
-            console.log(`  Migrated: ${filePath.replace(rootDir, ".")}`)
+            writeFileSync(filePath, content, 'utf-8')
+            console.log(`  Migrated: ${filePath.replace(rootDir, '.')}`)
         }
     }
 
@@ -135,7 +130,7 @@ function migrateSourceFiles(keyMap: Record<string, string>): void {
 }
 
 function escapeRegex(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 function getSourceFiles(): string[] {
@@ -148,22 +143,22 @@ function getSourceFiles(): string[] {
 }
 
 function main(): void {
-    console.log("🔍 Scanning for translation keys...\n")
+    console.log('🔍 Scanning for translation keys...\n')
 
     const mainLocale = readLocaleFile(config.mainLanguage)
 
     if (migrateMode) {
-        console.log("  [MIGRATE] Replacing nested keys with main language text in source files...\n")
+        console.log('  [MIGRATE] Replacing nested keys with main language text in source files...\n')
         const keyMap = buildNestedKeyMap(mainLocale)
         migrateSourceFiles(keyMap)
-        console.log("\n  Migration complete. Running sync...\n")
+        console.log('\n  Migration complete. Running sync...\n')
     }
 
     const files = getSourceFiles()
     const allKeys = new Set<string>()
 
     for (const filePath of files) {
-        const content = readFileSync(filePath, "utf-8")
+        const content = readFileSync(filePath, 'utf-8')
         const keys = extractKeys(content, filePath)
         for (const key of keys) {
             allKeys.add(key)
@@ -182,7 +177,7 @@ function main(): void {
 
     // Build other language files and track missing
     const missing: Record<string, Record<string, string>> = {}
-    const otherLanguages = config.languages.filter(l => l !== config.mainLanguage)
+    const otherLanguages = config.languages.filter((l) => l !== config.mainLanguage)
 
     for (const lang of otherLanguages) {
         const existing = readLocaleFile(lang)
@@ -191,7 +186,7 @@ function main(): void {
 
         for (const key of sortedKeys) {
             // Check if there's already a translation for this key directly
-            if (existing[key] && existing[key] !== "") {
+            if (existing[key] && existing[key] !== '') {
                 langOutput[key] = existing[key]
             } else {
                 // Check if the key was a value that maps from a nested key
@@ -199,34 +194,34 @@ function main(): void {
                 if (existingByValue) {
                     const nestedKey = existingByValue[0]
                     const langNested = readLocaleFile(lang)
-                    if (langNested[nestedKey] && langNested[nestedKey] !== "") {
+                    if (langNested[nestedKey] && langNested[nestedKey] !== '') {
                         langOutput[key] = langNested[nestedKey]
                     } else {
-                        langOutput[key] = ""
-                        missing[lang][key] = ""
+                        langOutput[key] = ''
+                        missing[lang][key] = ''
                     }
                 } else {
-                    langOutput[key] = ""
-                    missing[lang][key] = ""
+                    langOutput[key] = ''
+                    missing[lang][key] = ''
                 }
             }
         }
 
         const langPath = resolve(rootDir, config.localesDir, `${lang}.json`)
-        writeFileSync(langPath, JSON.stringify(langOutput, null, 4) + "\n", "utf-8")
+        writeFileSync(langPath, JSON.stringify(langOutput, null, 4) + '\n', 'utf-8')
         console.log(`  Written: ${lang}.json (${sortedKeys.length} keys)`)
     }
 
     // Write main language file
     const mainPath = resolve(rootDir, config.localesDir, `${config.mainLanguage}.json`)
-    writeFileSync(mainPath, JSON.stringify(mainOutput, null, 4) + "\n", "utf-8")
+    writeFileSync(mainPath, JSON.stringify(mainOutput, null, 4) + '\n', 'utf-8')
     console.log(`  Written: ${config.mainLanguage}.json (${sortedKeys.length} keys)`)
 
     // Write missing translations file
-    const hasMissing = otherLanguages.some(l => Object.keys(missing[l]).length > 0)
+    const hasMissing = otherLanguages.some((l) => Object.keys(missing[l]).length > 0)
     if (hasMissing) {
         const missingPath = resolve(rootDir, config.missingFile)
-        writeFileSync(missingPath, JSON.stringify(missing, null, 4) + "\n", "utf-8")
+        writeFileSync(missingPath, JSON.stringify(missing, null, 4) + '\n', 'utf-8')
         console.log(`\n  ⚠ Missing translations written to: ${config.missingFile}`)
         for (const lang of otherLanguages) {
             const count = Object.keys(missing[lang]).length
@@ -236,7 +231,7 @@ function main(): void {
         }
         console.log(`\n  Fill in the values and run: npm run apply-translations`)
     } else {
-        console.log("\n  ✓ All translations are complete!")
+        console.log('\n  ✓ All translations are complete!')
     }
 }
 

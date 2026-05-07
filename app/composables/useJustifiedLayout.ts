@@ -6,13 +6,7 @@ type Options = {
     widowAlign: Ref<GalleryWidowAlign>
 }
 
-export const useJustifiedLayout = ({
-    images,
-    containerWidth,
-    targetRowHeight,
-    gap,
-    widowAlign,
-}: Options) => {
+export const useJustifiedLayout = ({ images, containerWidth, targetRowHeight, gap, widowAlign }: Options) => {
     const layout = computed<JustifiedLayout>(() => {
         const cw = containerWidth.value
         const target = targetRowHeight.value
@@ -34,9 +28,7 @@ export const useJustifiedLayout = ({
             let rowHeight: number
             if (isLastRow) {
                 const naturalWidth = aspectSum * target + gapsWidth
-                rowHeight = naturalWidth > cw
-                    ? (cw - gapsWidth) / aspectSum
-                    : target
+                rowHeight = naturalWidth > cw ? (cw - gapsWidth) / aspectSum : target
             } else {
                 rowHeight = (cw - gapsWidth) / aspectSum
             }
@@ -68,9 +60,7 @@ export const useJustifiedLayout = ({
 
             const aspect = img.width / img.height
             const itemWidth = aspect * target
-            const currentWidth =
-                buffer.reduce((s, b) => s + b.aspect * target, 0) +
-                g * Math.max(0, buffer.length - 1)
+            const currentWidth = buffer.reduce((s, b) => s + b.aspect * target, 0) + g * Math.max(0, buffer.length - 1)
             const projected = currentWidth + (buffer.length ? g : 0) + itemWidth
 
             if (buffer.length && projected > cw) {
@@ -83,12 +73,7 @@ export const useJustifiedLayout = ({
 
         if (rows.length) {
             const last = rows[rows.length - 1]
-            if (
-                last &&
-                widowAlign.value === GalleryWidowAlign.HIDE_IF_SINGLE &&
-                last.items.length === 1 &&
-                last.isWidow
-            ) {
+            if (last && widowAlign.value === GalleryWidowAlign.HIDE_IF_SINGLE && last.items.length === 1 && last.isWidow) {
                 rows.pop()
             } else if (last) {
                 last.items.forEach((it) => (it.isLastRow = true))
@@ -96,8 +81,7 @@ export const useJustifiedLayout = ({
         }
 
         const flatItems = rows.flatMap((r) => r.items)
-        const totalHeight =
-            rows.reduce((s, r) => s + r.height, 0) + Math.max(0, rows.length - 1) * g
+        const totalHeight = rows.reduce((s, r) => s + r.height, 0) + Math.max(0, rows.length - 1) * g
 
         return { rows, items: flatItems, totalHeight }
     })

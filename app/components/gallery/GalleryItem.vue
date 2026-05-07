@@ -60,13 +60,7 @@
                 hoverClass,
             ]"
         >
-            <span
-                :class="[
-                    'px-4 text-center font-semibold',
-                    isDark ? 'text-black' : 'text-text-neutral-on-filled',
-                    captionClass,
-                ]"
-            >
+            <span :class="['px-4 text-center font-semibold', isDark ? 'text-black' : 'text-text-neutral-on-filled', captionClass]">
                 {{ image.caption }}
             </span>
         </div>
@@ -115,23 +109,22 @@ const props = defineProps({
         default: 0,
     },
     fit: {
-        type: String as PropType<"cover" | "contain">,
-        default: "cover",
-        validator: (v: string) => ["cover", "contain"].includes(v),
+        type: String as PropType<'cover' | 'contain'>,
+        default: 'cover',
+        validator: (v: string) => ['cover', 'contain'].includes(v),
     },
     captionPlacement: {
         type: String as PropType<GalleryCaptionPlacement>,
         default: GalleryCaptionPlacement.HOVER,
-        validator: (v: GalleryCaptionPlacement) =>
-            Object.values(GalleryCaptionPlacement).includes(v),
+        validator: (v: GalleryCaptionPlacement) => Object.values(GalleryCaptionPlacement).includes(v),
     },
     sizes: {
         type: String as PropType<string>,
-        default: "sm:50vw md:33vw lg:25vw",
+        default: 'sm:50vw md:33vw lg:25vw',
     },
     densities: {
         type: String as PropType<string>,
-        default: "x1 x2",
+        default: 'x1 x2',
     },
     isClickable: {
         type: Boolean as PropType<boolean>,
@@ -145,7 +138,7 @@ const props = defineProps({
 
 // Emits
 const emit = defineEmits<{
-    (e: "click", image: GalleryImage): void
+    (e: 'click', image: GalleryImage): void
 }>()
 
 // Stores
@@ -154,7 +147,7 @@ const { isDark } = storeToRefs(themeStore)
 
 // Computed
 const isButton = computed(() => props.isClickable)
-const tag = computed(() => (props.isClickable ? "button" : "div"))
+const tag = computed(() => (props.isClickable ? 'button' : 'div'))
 
 const wrapperStyle = computed(() => {
     if (!props.width || !props.height) return undefined
@@ -166,12 +159,12 @@ const wrapperStyle = computed(() => {
 
 const ariaLabel = computed(() => {
     if (!props.isClickable) return undefined
-    return props.image.caption || props.image.alt || "Open image"
+    return props.image.caption || props.image.alt || 'Open image'
 })
 
 // Methods
 const onClick = () => {
     if (!props.isClickable) return
-    emit("click", props.image)
+    emit('click', props.image)
 }
 </script>

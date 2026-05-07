@@ -4,7 +4,7 @@
         <SectionBody>
             Inicio
 
-            {{ $t("Prueba traducción") }}
+            {{ $t('Prueba traducción') }}
         </SectionBody>
     </Section>
 </template>
