@@ -18,15 +18,19 @@ Create a pull request from the current branch to `main`.
 
 ```markdown
 ## Summary
-- <bullet point>
-- <bullet point>
-- ...
+
+### <Topic A> (only if changes span multiple topics)
+- <change>
+- <change>
+
+### <Topic B>
+- <change>
+
+(If all changes share one topic, skip the headings and just use a flat bullet list.)
 
 ## Test plan
 - [ ] <testing step>
 - [ ] <testing step>
-
-Generated with [Claude Code](https://claude.com/claude-code)
 ```
 
 5. **Show the user a preview** of the full PR (title + body) before creating it.
@@ -40,5 +44,8 @@ Generated with [Claude Code](https://claude.com/claude-code)
 
 - The PR always targets `main`.
 - Summary bullets should explain **what** and **why**, not just list files.
+- Group related changes under topic headings when the PR spans multiple areas; use a flat list otherwise.
+- **Never** include `Co-Authored-By` or any co-author trailer.
+- **Never** include "Generated with Claude Code" or similar attribution lines.
 - Never create the PR without showing the preview first and getting approval.
 - If there are uncommitted changes, ask the user if they want to commit first (suggest using `/commit`).
