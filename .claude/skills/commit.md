@@ -30,7 +30,8 @@ Description:
 If all changes share one topic, skip the headings and just use a flat bullet list.
 
 5. Wait for the user to approve or request edits.
-6. Only after approval: stage the relevant files (`git add <specific files>` — never `git add .` or `git add -A`) and create the commit using a HEREDOC.
+6. Only after approval: run `npm run format` to auto-format the codebase.
+7. Stage the relevant files (`git add <specific files>` — never `git add .` or `git add -A`), including any files modified by the formatter, and create the commit using a HEREDOC.
 
 ## Rules
 

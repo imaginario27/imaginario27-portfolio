@@ -13,12 +13,7 @@ export default defineVitestConfig({
             reportsDirectory: 'tests/coverage',
             reporter: ['text', 'lcov'],
             include: ['app/**/*.{ts,vue}'],
-            exclude: [
-                'app/scripts/**',
-                'app/plugins/**',
-                'app/queries/**',
-                'app/extend/**',
-            ],
+            exclude: ['app/scripts/**', 'app/plugins/**', 'app/queries/**', 'app/extend/**'],
         },
     },
 })
