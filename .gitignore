@@ -26,5 +26,8 @@ logs
 # WPNuxt generated files
 .queries/
 
+# Coverage
+tests/coverage
+
 # SonarQube
 .scannerwork
