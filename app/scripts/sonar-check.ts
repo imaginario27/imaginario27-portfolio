@@ -55,7 +55,7 @@ const severityIcon = (severity: string): string => {
 }
 
 const sanitize = (input: string): string => {
-    return input.replace(/[\r\n]/g, '').slice(0, 500)
+    return input.replaceAll(/[\r\n]/g, '').slice(0, 500)
 }
 
 const stripPrefix = (component: string): string => {
@@ -64,6 +64,8 @@ const stripPrefix = (component: string): string => {
 
 const fetchLastAnalysis = async (): Promise<string | null> => {
     const token = process.env.SONAR_TOKEN
+    if (!token) return null
+
     const params = new URLSearchParams({
         project: PROJECT_KEY,
         ps: '1',
@@ -112,7 +114,7 @@ const checkSonar = async () => {
         return
     }
 
-    console.log(`\n⚠️  ${total} open SonarCloud issue(s) found:\n`)
+    console.log(`\n⚠️  ${Number(total)} open SonarCloud issue(s) found:\n`)
 
     const counts: Record<string, number> = {}
 
