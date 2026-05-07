@@ -4,7 +4,7 @@ export const useRouteWPSeo = async () => {
     const { isProjectPath, getProjectSlug, fetchProjectSeo } = useProjects()
 
     const stripLocale = (path: string): string => {
-        const codes = (locales.value as Array<{ code: string }>).map(l => l.code)
+        const codes = (locales.value as Array<{ code: string }>).map((l) => l.code)
         for (const code of codes) {
             if (code === defaultLocale) continue
             if (path === `/${code}`) return '/'
@@ -33,7 +33,7 @@ export const useRouteWPSeo = async () => {
 
     const { data: seoData } = await useAsyncData(
         () => `route-wp-seo:${route.path}`,
-        () => isProject.value ? fetchProjectSeo(slug.value) : fetchPageSeo(slug.value),
+        () => (isProject.value ? fetchProjectSeo(slug.value) : fetchPageSeo(slug.value)),
         { watch: [() => route.path] },
     )
 

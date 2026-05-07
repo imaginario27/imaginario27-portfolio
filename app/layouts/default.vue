@@ -1,6 +1,6 @@
 <template>
     <div class="min-h-screen bg-background-surface">
-        <WebHeader/>
+        <WebHeader />
         <MainContent>
             <slot />
         </MainContent>

@@ -1,27 +1,19 @@
 #!/usr/bin/env node
 
-import fs from "node:fs"
-import path from "node:path"
-import readline from "node:readline"
+import fs from 'node:fs'
+import path from 'node:path'
+import readline from 'node:readline'
 
 // ----------------------------------------------------
 // CONFIGURATION
 // ----------------------------------------------------
-const ASSETS_THEME_PATH = "app/assets/css/theme"
-const UI_THEME_FILE = "ui-theme.css"
-const COLORS_FILE = "colors.css"
+const ASSETS_THEME_PATH = 'app/assets/css/theme'
+const UI_THEME_FILE = 'ui-theme.css'
+const COLORS_FILE = 'colors.css'
 
-const THEMES = [
-    "primary-brand",
-    "secondary-brand",
-    "neutral",
-    "success",
-    "warning",
-    "info",
-    "danger",
-] as const
+const THEMES = ['primary-brand', 'secondary-brand', 'neutral', 'success', 'warning', 'info', 'danger'] as const
 
-type Theme = typeof THEMES[number]
+type Theme = (typeof THEMES)[number]
 
 interface Replacement {
     theme: Theme
@@ -37,14 +29,11 @@ const rl = readline.createInterface({
     output: process.stdout,
 })
 
-const ask = (question: string): Promise<string> =>
-    new Promise(resolve => rl.question(question, answer => resolve(answer.trim())))
+const ask = (question: string): Promise<string> => new Promise((resolve) => rl.question(question, (answer) => resolve(answer.trim())))
 
-const readFile = (filePath: string): string =>
-    fs.readFileSync(filePath, "utf8")
+const readFile = (filePath: string): string => fs.readFileSync(filePath, 'utf8')
 
-const writeFile = (filePath: string, content: string): void =>
-    fs.writeFileSync(filePath, content)
+const writeFile = (filePath: string, content: string): void => fs.writeFileSync(filePath, content)
 
 const getColorSchemesFromColorsCss = (content: string): Set<string> => {
     const regex = /(?:--)?(?:color-)?([a-z0-9-]+)-50:/g
@@ -61,14 +50,8 @@ const getColorSchemesFromColorsCss = (content: string): Set<string> => {
     return schemes
 }
 
-const extractCurrentSchemeForTheme = (
-    css: string,
-    theme: Theme
-): string | null => {
-    const regex = new RegExp(
-        String.raw`--color-theme-${theme}-\d+:\s*var\(--([a-z0-9-]+)-\d+\)`,
-        "i"
-    )
+const extractCurrentSchemeForTheme = (css: string, theme: Theme): string | null => {
+    const regex = new RegExp(String.raw`--color-theme-${theme}-\d+:\s*var\(--([a-z0-9-]+)-\d+\)`, 'i')
 
     const match = regex.exec(css)
     return match?.[1] ?? null
@@ -98,7 +81,7 @@ const run = async (): Promise<void> => {
 
     const replacements: Replacement[] = []
 
-    console.log("\n🎨 UI Theme color scheme configuration\n")
+    console.log('\n🎨 UI Theme color scheme configuration\n')
 
     for (const theme of THEMES) {
         const currentScheme = extractCurrentSchemeForTheme(uiThemeCss, theme)
@@ -108,22 +91,16 @@ const run = async (): Promise<void> => {
             continue
         }
 
-        const answer = await ask(
-            `Do you want to replace "${theme}" color scheme? (current: ${currentScheme}) [y/N]: `
-        )
+        const answer = await ask(`Do you want to replace "${theme}" color scheme? (current: ${currentScheme}) [y/N]: `)
 
-        if (answer.toLowerCase() !== "y") {
+        if (answer.toLowerCase() !== 'y') {
             continue
         }
 
-        const newScheme = await ask(
-            `→ Enter new color scheme name (must exist in colors.css, ex.: lavender): `
-        )
+        const newScheme = await ask(`→ Enter new color scheme name (must exist in colors.css, ex.: lavender): `)
 
         if (!availableSchemes.has(newScheme)) {
-            console.error(
-                `❌ Color scheme "${newScheme}" does not exist in colors.css — skipping "${theme}"`
-            )
+            console.error(`❌ Color scheme "${newScheme}" does not exist in colors.css — skipping "${theme}"`)
             continue
         }
 
@@ -137,16 +114,13 @@ const run = async (): Promise<void> => {
     rl.close()
 
     if (replacements.length === 0) {
-        console.log("\nℹ️  No changes applied")
+        console.log('\nℹ️  No changes applied')
         return
     }
 
     // Apply replacements AFTER all questions
     for (const { theme, from, to } of replacements) {
-        const regex = new RegExp(
-            String.raw`(--color-theme-${theme}-\d+:\s*var\()\s*--(?:color-)?${from}-(\d+\))`,
-            "g"
-        )
+        const regex = new RegExp(String.raw`(--color-theme-${theme}-\d+:\s*var\()\s*--(?:color-)?${from}-(\d+\))`, 'g')
 
         // Result will be: var(--pink-500), not --color-pink-500
         uiThemeCss = uiThemeCss.replace(regex, `$1--${to}-$2`)
@@ -154,17 +128,14 @@ const run = async (): Promise<void> => {
 
     writeFile(uiThemePath, uiThemeCss)
 
-    console.log("\n✅ ui-theme.css updated successfully\n")
-    
+    console.log('\n✅ ui-theme.css updated successfully\n')
+
     // Normalize colors.css by removing `--color-` prefix
-    const updatedColorsCss = colorsCss.replace(
-        /--color-([a-z0-9-]+):/g,
-        '--$1:'
-    )
+    const updatedColorsCss = colorsCss.replace(/--color-([a-z0-9-]+):/g, '--$1:')
 
     if (updatedColorsCss !== colorsCss) {
         writeFile(colorsPath, updatedColorsCss)
-        console.log("✅ colors.css cleaned: removed --color- prefixes\n")
+        console.log('✅ colors.css cleaned: removed --color- prefixes\n')
     }
 }
 

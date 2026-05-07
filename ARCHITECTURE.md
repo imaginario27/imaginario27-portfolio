@@ -95,26 +95,26 @@ app/queries/*.gql  ──►  useAsyncGql({ operation, variables })
 
 ## Dependency graph
 
-| From | Depends on | How |
-|---|---|---|
-| this repo | `@imaginario27/air-ui-ds` | Nuxt `extends: ["@imaginario27/air-ui-ds/nuxt.config.ts", …]` |
-| this repo | `@imaginario27/air-ui-utils` | same (via `extends`) |
-| `@imaginario27/air-ui-ds` | `@imaginario27/air-ui-utils` | DS layer extends utils layer (handled inside the package) |
-| `@imaginario27/air-ui-utils` | — | leaf layer |
+| From                         | Depends on                   | How                                                           |
+| ---------------------------- | ---------------------------- | ------------------------------------------------------------- |
+| this repo                    | `@imaginario27/air-ui-ds`    | Nuxt `extends: ["@imaginario27/air-ui-ds/nuxt.config.ts", …]` |
+| this repo                    | `@imaginario27/air-ui-utils` | same (via `extends`)                                          |
+| `@imaginario27/air-ui-ds`    | `@imaginario27/air-ui-utils` | DS layer extends utils layer (handled inside the package)     |
+| `@imaginario27/air-ui-utils` | —                            | leaf layer                                                    |
 
 ## Key files
 
-| File | Role | Edit when… |
-|---|---|---|
-| [nuxt.config.ts](nuxt.config.ts) | Nuxt config: modules, extends (DS layers), i18n, Tailwind Vite plugin, runtimeConfig | Adding a module, changing GQL host, touching i18n locales or strategy |
-| [app/assets/css/main.css](app/assets/css/main.css) | Tailwind v4 entry + `@theme` token declaration | Exposing a new semantic token as a Tailwind utility |
-| [app/assets/css/theme/](app/assets/css/theme/) | Local copy of DS theme layers (primitives → colors → ui-theme) | Rebranding the portfolio; otherwise regenerate via scripts |
-| [app/scripts/generate-theme.ts](app/scripts/generate-theme.ts) | Regenerates `theme/*.css` from source | Theme refresh after DS theme changes |
-| [app/scripts/update-ui-theme-colors.ts](app/scripts/update-ui-theme-colors.ts) | Updates `ui-theme.css` color mappings | Switching color palette without full regen |
-| [app/queries/](app/queries/) | GraphQL operations (`menu`, `pages`, `page-seo`) | Adding a new WP data source |
-| [app/extend/queries/](app/extend/queries/) | Fragments / query extensions consumed by the codegen | Reusing a fragment across queries |
-| [app/stores/useLanguageStore.ts](app/stores/useLanguageStore.ts) | Current locale + available languages, wired to i18n | Changing locale bootstrapping |
-| [app/stores/useThemeStore.ts](app/stores/useThemeStore.ts) | Light/dark mode state | Changing theme persistence or default |
-| [i18n/locales/](i18n/locales/) | `es.json`, `en.json`, `de.json` | Adding/renaming translation keys (all three locales required) |
-| [content.config.ts](content.config.ts) | `@nuxt/content` collection config | Splitting collections or adding schema |
-| [tests/](tests/) | Vitest specs mirroring `app/` paths | Every new component or util gets a sibling test |
+| File                                                                           | Role                                                                                 | Edit when…                                                            |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
+| [nuxt.config.ts](nuxt.config.ts)                                               | Nuxt config: modules, extends (DS layers), i18n, Tailwind Vite plugin, runtimeConfig | Adding a module, changing GQL host, touching i18n locales or strategy |
+| [app/assets/css/main.css](app/assets/css/main.css)                             | Tailwind v4 entry + `@theme` token declaration                                       | Exposing a new semantic token as a Tailwind utility                   |
+| [app/assets/css/theme/](app/assets/css/theme/)                                 | Local copy of DS theme layers (primitives → colors → ui-theme)                       | Rebranding the portfolio; otherwise regenerate via scripts            |
+| [app/scripts/generate-theme.ts](app/scripts/generate-theme.ts)                 | Regenerates `theme/*.css` from source                                                | Theme refresh after DS theme changes                                  |
+| [app/scripts/update-ui-theme-colors.ts](app/scripts/update-ui-theme-colors.ts) | Updates `ui-theme.css` color mappings                                                | Switching color palette without full regen                            |
+| [app/queries/](app/queries/)                                                   | GraphQL operations (`menu`, `pages`, `page-seo`)                                     | Adding a new WP data source                                           |
+| [app/extend/queries/](app/extend/queries/)                                     | Fragments / query extensions consumed by the codegen                                 | Reusing a fragment across queries                                     |
+| [app/stores/useLanguageStore.ts](app/stores/useLanguageStore.ts)               | Current locale + available languages, wired to i18n                                  | Changing locale bootstrapping                                         |
+| [app/stores/useThemeStore.ts](app/stores/useThemeStore.ts)                     | Light/dark mode state                                                                | Changing theme persistence or default                                 |
+| [i18n/locales/](i18n/locales/)                                                 | `es.json`, `en.json`, `de.json`                                                      | Adding/renaming translation keys (all three locales required)         |
+| [content.config.ts](content.config.ts)                                         | `@nuxt/content` collection config                                                    | Splitting collections or adding schema                                |
+| [tests/](tests/)                                                               | Vitest specs mirroring `app/` paths                                                  | Every new component or util gets a sibling test                       |

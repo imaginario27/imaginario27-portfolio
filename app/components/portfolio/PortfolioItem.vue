@@ -56,39 +56,18 @@
                 hoverClass,
             ]"
         >
-            <span
-                :class="[
-                    'px-4',
-                    'text-center',
-                    'font-semibold',
-                    isDark ? 'text-black' : 'text-text-neutral-on-filled',
-                    captionClass,
-                ]"
-            >
+            <span :class="['px-4', 'text-center', 'font-semibold', isDark ? 'text-black' : 'text-text-neutral-on-filled', captionClass]">
                 {{ item.title }}
             </span>
             <p
                 v-if="showExcerpt && item.excerpt"
-                :class="[
-                    'mt-2',
-                    'px-4',
-                    'text-center',
-                    'text-sm',
-                    isDark ? 'text-black/70' : 'text-text-neutral-on-filled/70',
-                ]"
+                :class="['mt-2', 'px-4', 'text-center', 'text-sm', isDark ? 'text-black/70' : 'text-text-neutral-on-filled/70']"
             >
                 {{ item.excerpt }}
             </p>
             <div
                 v-if="showTaxonomies && visibleTerms.length"
-                :class="[
-                    'mt-3',
-                    'flex',
-                    'flex-wrap',
-                    'justify-center',
-                    'gap-1.5',
-                    'px-4',
-                ]"
+                :class="['mt-3', 'flex', 'flex-wrap', 'justify-center', 'gap-1.5', 'px-4']"
             >
                 <span
                     v-for="term in visibleTerms"
@@ -157,16 +136,15 @@ const props = defineProps({
     captionPlacement: {
         type: String as PropType<GalleryCaptionPlacement>,
         default: GalleryCaptionPlacement.HOVER,
-        validator: (v: GalleryCaptionPlacement) =>
-            Object.values(GalleryCaptionPlacement).includes(v),
+        validator: (v: GalleryCaptionPlacement) => Object.values(GalleryCaptionPlacement).includes(v),
     },
     sizes: {
         type: String as PropType<string>,
-        default: "sm:50vw md:33vw lg:25vw",
+        default: 'sm:50vw md:33vw lg:25vw',
     },
     densities: {
         type: String as PropType<string>,
-        default: "x1 x2",
+        default: 'x1 x2',
     },
     showExcerpt: {
         type: Boolean as PropType<boolean>,
@@ -178,7 +156,7 @@ const props = defineProps({
     },
     taxonomyToShow: {
         type: String as PropType<string>,
-        default: "projectCategories",
+        default: 'projectCategories',
     },
     itemClass: String as PropType<string>,
     imageClass: String as PropType<string>,

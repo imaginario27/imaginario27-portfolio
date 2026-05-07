@@ -1,14 +1,13 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @source "../../node_modules/@imaginario27/air-ui-ds";
 @source "../../node_modules/@imaginario27/air-ui-utils";
 
-@import "./theme/primitives.css";
-@import "./theme/colors.css";
-@import "./theme/ui-theme.css";
+@import './theme/primitives.css';
+@import './theme/colors.css';
+@import './theme/ui-theme.css';
 
 @source "../../../node_modules/@imaginario27/air-ui-ds";
 @source "../../../node_modules/@imaginario27/air-ui-utils";
-
 
 @theme {
     /* Disables Tailwind default colors */

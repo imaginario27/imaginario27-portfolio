@@ -36,9 +36,7 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
     } = options
 
     // Filtering
-    const filterValue = ref<string | string[]>(
-        filterIsMultiple.value ? [] : filterHasAllButton.value ? "__all__" : ""
-    )
+    const filterValue = ref<string | string[]>(filterIsMultiple.value ? [] : filterHasAllButton.value ? '__all__' : '')
 
     const onFilterChange = (v: string | string[]) => {
         filterValue.value = v
@@ -49,10 +47,7 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
     const filtered = computed<GalleryImage[]>(() => {
         if (!showFilter.value) return items.value
         const v = filterValue.value
-        const isAll =
-            (Array.isArray(v) && v.length === 0) ||
-            v === "__all__" ||
-            v === ""
+        const isAll = (Array.isArray(v) && v.length === 0) || v === '__all__' || v === ''
         if (isAll) return items.value
 
         const wanted = Array.isArray(v) ? v : [v]
@@ -67,9 +62,9 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
         const list = [...filtered.value]
         switch (sortBy.value) {
             case GallerySortBy.TITLE_ASC:
-                return list.sort((a, b) => (a.alt || "").localeCompare(b.alt || ""))
+                return list.sort((a, b) => (a.alt || '').localeCompare(b.alt || ''))
             case GallerySortBy.TITLE_DESC:
-                return list.sort((a, b) => (b.alt || "").localeCompare(a.alt || ""))
+                return list.sort((a, b) => (b.alt || '').localeCompare(a.alt || ''))
             case GallerySortBy.RANDOM:
                 return list.sort(() => Math.random() - 0.5)
             case GallerySortBy.DATE_ASC:
@@ -84,8 +79,7 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
     const cappedDataset = computed<GalleryImage[]>(() => {
         if (
             limit.value > 0 &&
-            (paginationMode.value === GalleryPaginationMode.PAGINATION ||
-                paginationMode.value === GalleryPaginationMode.NONE)
+            (paginationMode.value === GalleryPaginationMode.PAGINATION || paginationMode.value === GalleryPaginationMode.NONE)
         ) {
             return filteredAndSorted.value.slice(0, limit.value)
         }
@@ -110,7 +104,7 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
         (v) => {
             if (visibleCount.value === 0) visibleCount.value = v
         },
-        { immediate: true }
+        { immediate: true },
     )
 
     const onPageChange = (p: number) => {
@@ -133,17 +127,12 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
         }
     })
 
-    const totalPages = computed(() =>
-        Math.max(1, Math.ceil(cappedDataset.value.length / pageSize.value))
-    )
+    const totalPages = computed(() => Math.max(1, Math.ceil(cappedDataset.value.length / pageSize.value)))
 
     const hasMore = computed(() => visibleCount.value < cappedDataset.value.length)
 
     const loadMore = () => {
-        visibleCount.value = Math.min(
-            cappedDataset.value.length,
-            visibleCount.value + pageSize.value
-        )
+        visibleCount.value = Math.min(cappedDataset.value.length, visibleCount.value + pageSize.value)
     }
 
     // Infinite-scroll sentinel
@@ -153,33 +142,33 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
     })
 
     // Grid layout
-    const breakpoint = ref<"sm" | "md" | "lg">("sm")
+    const breakpoint = ref<'sm' | 'md' | 'lg'>('sm')
 
     const updateBreakpoint = () => {
-        if (typeof window === "undefined") return
+        if (typeof window === 'undefined') return
         const w = window.innerWidth
-        if (w >= 1024) breakpoint.value = "lg"
-        else if (w >= 768) breakpoint.value = "md"
-        else breakpoint.value = "sm"
+        if (w >= 1024) breakpoint.value = 'lg'
+        else if (w >= 768) breakpoint.value = 'md'
+        else breakpoint.value = 'sm'
     }
 
     onMounted(() => {
         updateBreakpoint()
-        window.addEventListener("resize", updateBreakpoint, { passive: true })
+        window.addEventListener('resize', updateBreakpoint, { passive: true })
     })
     onBeforeUnmount(() => {
-        if (typeof window !== "undefined") {
-            window.removeEventListener("resize", updateBreakpoint)
+        if (typeof window !== 'undefined') {
+            window.removeEventListener('resize', updateBreakpoint)
         }
     })
 
     const activeColumns = computed(() => {
         switch (breakpoint.value) {
-            case "lg":
+            case 'lg':
                 return columnsLg.value
-            case "md":
+            case 'md':
                 return columnsMd.value
-            case "sm":
+            case 'sm':
             default:
                 return columnsSm.value
         }
@@ -205,16 +194,16 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
     })
 
     const rowJustifyClass = (row: { isWidow: boolean; align: GalleryWidowAlign }) => {
-        if (!row.isWidow) return "justify-start"
+        if (!row.isWidow) return 'justify-start'
         switch (row.align) {
             case GalleryWidowAlign.CENTER:
-                return "justify-center"
+                return 'justify-center'
             case GalleryWidowAlign.JUSTIFY:
-                return "justify-between"
+                return 'justify-between'
             case GalleryWidowAlign.LEFT:
             case GalleryWidowAlign.HIDE_IF_SINGLE:
             default:
-                return "justify-start"
+                return 'justify-start'
         }
     }
 

@@ -14,26 +14,14 @@
 
         <div
             v-if="pending && !visibleImages.length"
-            :class="[
-                'flex',
-                'items-center',
-                'justify-center',
-                'py-12',
-                'text-text-neutral-subtle',
-            ]"
+            :class="['flex', 'items-center', 'justify-center', 'py-12', 'text-text-neutral-subtle']"
         >
             {{ loadingText }}
         </div>
 
         <div
             v-else-if="!pending && !visibleImages.length"
-            :class="[
-                'flex',
-                'items-center',
-                'justify-center',
-                'py-12',
-                'text-text-neutral-subtle',
-            ]"
+            :class="['flex', 'items-center', 'justify-center', 'py-12', 'text-text-neutral-subtle']"
         >
             {{ emptyText }}
         </div>
@@ -134,7 +122,7 @@
 const props = defineProps({
     id: {
         type: String as PropType<string>,
-        default: "portfolio",
+        default: 'portfolio',
     },
     items: {
         type: Array as PropType<PortfolioItem[] | null>,
@@ -175,7 +163,7 @@ const props = defineProps({
     },
     filterTaxonomy: {
         type: String as PropType<string>,
-        default: "projectCategories",
+        default: 'projectCategories',
     },
     filterOptions: {
         type: Array as PropType<GalleryFilterOption[] | null>,
@@ -191,7 +179,7 @@ const props = defineProps({
     },
     filterAllText: {
         type: String as PropType<string>,
-        default: "All",
+        default: 'All',
     },
 
     // Sorting
@@ -225,21 +213,21 @@ const props = defineProps({
     },
     taxonomyToShow: {
         type: String as PropType<string>,
-        default: "projectCategories",
+        default: 'projectCategories',
     },
 
     // Copy
     loadMoreText: {
         type: String as PropType<string>,
-        default: "Load more",
+        default: 'Load more',
     },
     loadingText: {
         type: String as PropType<string>,
-        default: "Loading…",
+        default: 'Loading…',
     },
     emptyText: {
         type: String as PropType<string>,
-        default: "No projects to show",
+        default: 'No projects to show',
     },
 
     // Class API
@@ -252,14 +240,7 @@ const props = defineProps({
     paginationClass: String as PropType<string>,
 })
 
-const {
-    pending,
-    setItems,
-    fetchProjects,
-    buildFilterOptions,
-    imagesWithTags,
-    itemsByImageId,
-} = usePortfolioData()
+const { pending, setItems, fetchProjects, buildFilterOptions, imagesWithTags, itemsByImageId } = usePortfolioData()
 
 watch(
     () => props.items,
@@ -270,7 +251,7 @@ watch(
             fetchProjects()
         }
     },
-    { immediate: true, deep: true }
+    { immediate: true, deep: true },
 )
 
 const layoutImages = imagesWithTags(props.filterTaxonomy)
@@ -315,14 +296,16 @@ const {
 })
 
 const getPortfolioItem = (imageId: string): PortfolioItem => {
-    return itemsByImageId.value.get(imageId) ?? {
-        id: imageId,
-        title: "",
-        slug: "",
-        url: "/",
-        excerpt: null,
-        featuredImage: { id: imageId, src: "", alt: "", width: 0, height: 0 },
-        taxonomies: {},
-    }
+    return (
+        itemsByImageId.value.get(imageId) ?? {
+            id: imageId,
+            title: '',
+            slug: '',
+            url: '/',
+            excerpt: null,
+            featuredImage: { id: imageId, src: '', alt: '', width: 0, height: 0 },
+            taxonomies: {},
+        }
+    )
 }
 </script>

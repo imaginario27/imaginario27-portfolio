@@ -9,14 +9,7 @@ When an element has **more than 3 classes OR more than 3 attributes**, put each 
 <span class="text-text-subtle text-sm">…</span>
 
 <!-- > 3 classes → one per line -->
-<div
-    :class="[
-        'relative',
-        'w-full',
-        'h-[calc(100vh-72px)]',
-        'overflow-hidden',
-    ]"
->
+<div :class="['relative', 'w-full', 'h-[calc(100vh-72px)]', 'overflow-hidden']">
     …
 </div>
 

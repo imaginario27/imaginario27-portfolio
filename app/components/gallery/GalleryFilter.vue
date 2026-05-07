@@ -20,7 +20,7 @@
 const props = defineProps({
     id: {
         type: String as PropType<string>,
-        default: "gallery-filter",
+        default: 'gallery-filter',
     },
     modelValue: {
         type: [String, Array] as PropType<string | string[]>,
@@ -40,19 +40,17 @@ const props = defineProps({
     },
     allButtonText: {
         type: String as PropType<string>,
-        default: "All",
+        default: 'All',
     },
     allValue: {
         type: String as PropType<string>,
-        default: "__all__",
+        default: '__all__',
     },
     buttonStyle: {
         type: String as PropType<ButtonStyleType.PRIMARY_BRAND_SOFT | ButtonStyleType.NEUTRAL_OUTLINED>,
         default: ButtonStyleType.NEUTRAL_OUTLINED,
         validator: (value: string) =>
-            [ButtonStyleType.PRIMARY_BRAND_SOFT, ButtonStyleType.NEUTRAL_OUTLINED].includes(
-                value as ButtonStyleType
-            ),
+            [ButtonStyleType.PRIMARY_BRAND_SOFT, ButtonStyleType.NEUTRAL_OUTLINED].includes(value as ButtonStyleType),
     },
     buttonSize: {
         type: String as PropType<ButtonSize>,
@@ -67,7 +65,7 @@ const props = defineProps({
 
 // Emits
 const emit = defineEmits<{
-    (e: "update:modelValue", value: string | string[]): void
+    (e: 'update:modelValue', value: string | string[]): void
 }>()
 
 // Computed
@@ -75,11 +73,11 @@ const buttons = computed(() =>
     props.options.map((o) => ({
         value: o.value,
         text: o.text,
-    }))
+    })),
 )
 
 // Methods
 const onUpdate = (value: string | string[]) => {
-    emit("update:modelValue", value)
+    emit('update:modelValue', value)
 }
 </script>

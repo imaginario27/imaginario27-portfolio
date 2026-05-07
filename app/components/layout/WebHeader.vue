@@ -33,9 +33,9 @@
 </template>
 <script setup lang="ts">
 // Imports
-import { MenuLocationEnum } from "#gql/default"
-import logoLight from "~~/public/images/logo/imaginario27-logo-color.svg?raw"
-import logoDark from "~~/public/images/logo/imaginario27-logo-outline-white.svg?raw"
+import { MenuLocationEnum } from '#gql/default'
+import logoLight from '~~/public/images/logo/imaginario27-logo-color.svg?raw'
+import logoDark from '~~/public/images/logo/imaginario27-logo-outline-white.svg?raw'
 
 // Props
 defineProps({
@@ -70,11 +70,11 @@ const { isMobile } = useIsMobile()
 // Translation dependencies
 const { locale } = useI18n()
 const localePath = useLocalePath()
-const menuLanguage = computed(() => currentLanguage.value || locale.value || "en")
+const menuLanguage = computed(() => currentLanguage.value || locale.value || 'en')
 
 // Data
 const { data: menu } = await useAsyncGql({
-    operation: "Menu",
+    operation: 'Menu',
     variables: {
         language: menuLanguage,
         location: MenuLocationEnum.PRIMARY_MENU,
@@ -94,13 +94,13 @@ const menuItems = computed<MenuItem[]>(() => {
             const children = nodes
                 .filter((item) => item.parentId === parent.id)
                 .map((child) => ({
-                    text: child.label ?? "",
-                    to: localePath(child.uri || "/"),
+                    text: child.label ?? '',
+                    to: localePath(child.uri || '/'),
                 }))
 
             return {
-                text: parent.label ?? "",
-                to: localePath(parent.uri || "/"),
+                text: parent.label ?? '',
+                to: localePath(parent.uri || '/'),
                 children: children.length ? children : undefined,
             }
         })

@@ -1,21 +1,13 @@
 <template>
     <Section>
         <SectionBody>
-            <div
-                :class="[
-                    'mx-auto',
-                    'max-w-7xl',
-                    'space-y-8',
-                    'px-4',
-                    'py-12',
-                ]"
-            >
+            <div :class="['mx-auto', 'max-w-7xl', 'space-y-8', 'px-4', 'py-12']">
                 <header class="space-y-2">
                     <h1 class="text-3xl font-bold text-text-default">
-                        {{ $t("Portfolio") }}
+                        {{ $t('Portfolio') }}
                     </h1>
                     <p class="text-text-neutral-subtle">
-                        {{ $t("Una selección de proyectos destacados") }}
+                        {{ $t('Una selección de proyectos destacados') }}
                     </p>
                 </header>
 
@@ -41,7 +33,7 @@
 
 <script setup lang="ts">
 definePageMeta({
-    title: "Portfolio",
+    title: 'Portfolio',
 })
 
 const { locale } = useI18n()

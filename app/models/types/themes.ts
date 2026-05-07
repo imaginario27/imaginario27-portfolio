@@ -1,1 +1,1 @@
-export type UITheme = "light" | "dark" | "system";
+export type UITheme = 'light' | 'dark' | 'system'

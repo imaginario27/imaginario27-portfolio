@@ -1,30 +1,11 @@
 <template>
     <section
         ref="rootEl"
-        :class="[
-            'relative',
-            'flex',
-            'h-full',
-            'w-full',
-            'items-center',
-            'justify-center',
-            'select-none',
-            sliderClass,
-        ]"
+        :class="['relative', 'flex', 'h-full', 'w-full', 'items-center', 'justify-center', 'select-none', sliderClass]"
         aria-roledescription="carousel"
         :aria-label="ariaLabel"
     >
-        <div
-            :class="[
-                'relative',
-                'flex',
-                'h-full',
-                'w-full',
-                'items-center',
-                'justify-center',
-                'overflow-hidden',
-            ]"
-        >
+        <div :class="['relative', 'flex', 'h-full', 'w-full', 'items-center', 'justify-center', 'overflow-hidden']">
             <Transition
                 mode="out-in"
                 enter-active-class="transition-opacity duration-200 motion-reduce:transition-none"
@@ -35,13 +16,7 @@
                 <div
                     v-if="current"
                     :key="current.id"
-                    :class="[
-                        'flex',
-                        'h-full',
-                        'w-full',
-                        'items-center',
-                        'justify-center',
-                    ]"
+                    :class="['flex', 'h-full', 'w-full', 'items-center', 'justify-center']"
                     aria-roledescription="slide"
                     :aria-label="`${currentIndex + 1} / ${images.length}`"
                 >
@@ -87,7 +62,10 @@
             :aria-label="prevLabel"
             @click="prev"
         >
-            <Icon name="mdi:chevron-left" :size="IconSize.LG" />
+            <Icon
+                name="mdi:chevron-left"
+                :size="IconSize.LG"
+            />
         </button>
 
         <button
@@ -119,7 +97,10 @@
             :aria-label="nextLabel"
             @click="next"
         >
-            <Icon name="mdi:chevron-right" :size="IconSize.LG" />
+            <Icon
+                name="mdi:chevron-right"
+                :size="IconSize.LG"
+            />
         </button>
 
         <div
@@ -192,22 +173,22 @@ const props = defineProps({
     },
     prevLabel: {
         type: String as PropType<string>,
-        default: "Previous image",
+        default: 'Previous image',
     },
     nextLabel: {
         type: String as PropType<string>,
-        default: "Next image",
+        default: 'Next image',
     },
     ariaLabel: {
         type: String as PropType<string>,
-        default: "Image gallery",
+        default: 'Image gallery',
     },
     sliderClass: String as PropType<string>,
 })
 
 // Emits
 const emit = defineEmits<{
-    (e: "update:modelValue" | "change", index: number): void
+    (e: 'update:modelValue' | 'change', index: number): void
 }>()
 
 // States
@@ -219,7 +200,7 @@ watch(
     () => props.modelValue,
     (v) => {
         currentIndex.value = v
-    }
+    },
 )
 
 // Computed
@@ -229,29 +210,27 @@ const current = computed(() => props.images[currentIndex.value])
 const setIndex = (i: number) => {
     const len = props.images.length
     if (!len) return
-    const next = props.loop
-        ? ((i % len) + len) % len
-        : Math.max(0, Math.min(len - 1, i))
+    const next = props.loop ? ((i % len) + len) % len : Math.max(0, Math.min(len - 1, i))
     if (next === currentIndex.value) return
     currentIndex.value = next
-    emit("update:modelValue", next)
-    emit("change", next)
+    emit('update:modelValue', next)
+    emit('change', next)
 }
 
 const next = () => setIndex(currentIndex.value + 1)
 const prev = () => setIndex(currentIndex.value - 1)
 
 onMounted(() => {
-    rootEl.value?.setAttribute("tabindex", "0")
+    rootEl.value?.setAttribute('tabindex', '0')
     if (props.autofocus) rootEl.value?.focus()
 })
 
-useEventListener(rootEl, "keydown", (e: KeyboardEvent) => {
-    if (e.key === "ArrowLeft") {
+useEventListener(rootEl, 'keydown', (e: KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') {
         e.preventDefault()
         prev()
     }
-    if (e.key === "ArrowRight") {
+    if (e.key === 'ArrowRight') {
         e.preventDefault()
         next()
     }

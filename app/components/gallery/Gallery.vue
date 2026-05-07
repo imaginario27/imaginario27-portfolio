@@ -14,26 +14,14 @@
 
         <div
             v-if="pending && !visibleImages.length"
-            :class="[
-                'flex',
-                'items-center',
-                'justify-center',
-                'py-12',
-                'text-text-neutral-subtle',
-            ]"
+            :class="['flex', 'items-center', 'justify-center', 'py-12', 'text-text-neutral-subtle']"
         >
             {{ loadingText }}
         </div>
 
         <div
             v-else-if="!pending && !visibleImages.length"
-            :class="[
-                'flex',
-                'items-center',
-                'justify-center',
-                'py-12',
-                'text-text-neutral-subtle',
-            ]"
+            :class="['flex', 'items-center', 'justify-center', 'py-12', 'text-text-neutral-subtle']"
         >
             {{ emptyText }}
         </div>
@@ -142,7 +130,7 @@
 const props = defineProps({
     id: {
         type: String as PropType<string>,
-        default: "gallery",
+        default: 'gallery',
     },
     mediaIds: {
         type: Array as PropType<(string | number)[]>,
@@ -203,7 +191,7 @@ const props = defineProps({
     },
     filterAllText: {
         type: String as PropType<string>,
-        default: "All",
+        default: 'All',
     },
 
     // Sorting (no UI; configured)
@@ -235,15 +223,15 @@ const props = defineProps({
     // Copy
     loadMoreText: {
         type: String as PropType<string>,
-        default: "Load more",
+        default: 'Load more',
     },
     loadingText: {
         type: String as PropType<string>,
-        default: "Loading…",
+        default: 'Loading…',
     },
     emptyText: {
         type: String as PropType<string>,
-        default: "No images to show",
+        default: 'No images to show',
     },
 
     // Class API
@@ -260,7 +248,7 @@ const props = defineProps({
 
 // Emits
 const emit = defineEmits<{
-    (e: "select", image: GalleryImage, index: number): void
+    (e: 'select', image: GalleryImage, index: number): void
 }>()
 
 // Media fetching
@@ -280,7 +268,7 @@ const fetchMedia = async () => {
     try {
         const ids = props.mediaIds.map(String)
         const { data } = await useAsyncGql({
-            operation: "GalleryMediaItems",
+            operation: 'GalleryMediaItems',
             variables: { ids },
         })
         const nodes = (data.value?.mediaItems?.nodes ?? []) as Array<{
@@ -299,8 +287,8 @@ const fetchMedia = async () => {
             const key = String(n.databaseId ?? n.id)
             byId.set(key, {
                 id: key,
-                src: n.sourceUrl ?? "",
-                alt: n.altText ?? n.title ?? "",
+                src: n.sourceUrl ?? '',
+                alt: n.altText ?? n.title ?? '',
                 caption: stripHtml(n.caption ?? null) || null,
                 width: n.mediaDetails?.width ?? 0,
                 height: n.mediaDetails?.height ?? 0,
@@ -308,17 +296,15 @@ const fetchMedia = async () => {
             })
         })
 
-        fetchedImages.value = ids
-            .map((id) => byId.get(id))
-            .filter((x): x is GalleryImage => Boolean(x && x.src && x.width && x.height))
+        fetchedImages.value = ids.map((id) => byId.get(id)).filter((x): x is GalleryImage => Boolean(x && x.src && x.width && x.height))
     } finally {
         pending.value = false
     }
 }
 
 const stripHtml = (html: string | null) => {
-    if (!html) return ""
-    return html.replace(/<[^>]+>/g, "").trim()
+    if (!html) return ''
+    return html.replace(/<[^>]+>/g, '').trim()
 }
 
 watch(
@@ -326,7 +312,7 @@ watch(
     () => {
         fetchMedia()
     },
-    { immediate: true, deep: true }
+    { immediate: true, deep: true },
 )
 
 // Layout composable
@@ -370,7 +356,7 @@ const lightboxIndex = ref(0)
 
 const onItemClick = (image: GalleryImage) => {
     const idx = visibleImages.value.findIndex((i) => i.id === image.id)
-    emit("select", image, idx >= 0 ? idx : 0)
+    emit('select', image, idx >= 0 ? idx : 0)
     if (props.enableLightbox) {
         lightboxIndex.value = idx >= 0 ? idx : 0
         lightboxOpen.value = true
