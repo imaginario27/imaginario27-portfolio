@@ -69,7 +69,11 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
             case GallerySortBy.TITLE_DESC:
                 return list.sort((a, b) => (b.alt || '').localeCompare(a.alt || ''))
             case GallerySortBy.RANDOM:
-                return list.sort(() => Math.random() - 0.5)
+                for (let i = list.length - 1; i > 0; i--) {
+                    const j = Math.trunc(Math.random() * (i + 1))
+                    ;[list[i], list[j]] = [list[j]!, list[i]!]
+                }
+                return list
             case GallerySortBy.DATE_ASC:
             case GallerySortBy.DATE_DESC:
             case GallerySortBy.NONE:

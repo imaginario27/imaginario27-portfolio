@@ -36,7 +36,7 @@ const readFile = (filePath: string): string => fs.readFileSync(filePath, 'utf8')
 const writeFile = (filePath: string, content: string): void => fs.writeFileSync(filePath, content)
 
 const getColorSchemesFromColorsCss = (content: string): Set<string> => {
-    const regex = /(?:--)?(?:color-)?([a-z0-9-]+)-50:/g
+    const regex = /(?:--|color-)*([a-z0-9][a-z0-9-]*)-50:/g
     const schemes = new Set<string>()
 
     let match: RegExpExecArray | null

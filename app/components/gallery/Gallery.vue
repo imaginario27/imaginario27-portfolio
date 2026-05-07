@@ -304,7 +304,8 @@ const fetchMedia = async () => {
 
 const stripHtml = (html: string | null) => {
     if (!html) return ''
-    return html.replaceAll(/<[^>]+>/g, '').trim()
+    const doc = new DOMParser().parseFromString(html, 'text/html')
+    return (doc.body.textContent ?? '').trim()
 }
 
 watch(
