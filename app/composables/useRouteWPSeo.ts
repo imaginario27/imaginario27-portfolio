@@ -20,7 +20,7 @@ export const useRouteWPSeo = async () => {
     const slug = computed(() => {
         const path = normalizedPath.value
         if (isProject.value) return getProjectSlug(path)
-        return path === '/' ? '/' : path.replace(/^\/|\/$/g, '')
+        return path === '/' ? '/' : path.replaceAll(/^\/|\/$/g, '')
     })
 
     const fetchPageSeo = async (pageSlug: string) => {

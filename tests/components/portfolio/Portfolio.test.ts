@@ -1,7 +1,6 @@
 // @vitest-environment nuxt
-import { describe, it, expect } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import Portfolio from '~/components/portfolio/Portfolio.vue'
+import Portfolio from '@/components/portfolio/Portfolio.vue'
 
 const makeItems = (count: number): PortfolioItem[] =>
     Array.from({ length: count }, (_, i) => ({

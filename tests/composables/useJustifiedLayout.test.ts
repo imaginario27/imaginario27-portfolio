@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-import { describe, it, expect } from 'vitest'
 
 const img = (id: string, w: number, h: number): GalleryImage => ({
     id,

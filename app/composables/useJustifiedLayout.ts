@@ -54,9 +54,8 @@ export const useJustifiedLayout = ({ images, containerWidth, targetRowHeight, ga
             buffer = []
         }
 
-        for (let i = 0; i < images.value.length; i++) {
-            const img = images.value[i]
-            if (!img || !img.width || !img.height) continue
+        for (const img of images.value) {
+            if (!img?.width || !img.height) continue
 
             const aspect = img.width / img.height
             const itemWidth = aspect * target
@@ -72,7 +71,7 @@ export const useJustifiedLayout = ({ images, containerWidth, targetRowHeight, ga
         flush(true)
 
         if (rows.length) {
-            const last = rows[rows.length - 1]
+            const last = rows.at(-1)
             if (last && widowAlign.value === GalleryWidowAlign.HIDE_IF_SINGLE && last.items.length === 1 && last.isWidow) {
                 rows.pop()
             } else if (last) {
