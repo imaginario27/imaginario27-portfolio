@@ -123,7 +123,7 @@ const run = async (): Promise<void> => {
         const regex = new RegExp(String.raw`(--color-theme-${theme}-\d+:\s*var\()\s*--(?:color-)?${from}-(\d+\))`, 'g')
 
         // Result will be: var(--pink-500), not --color-pink-500
-        uiThemeCss = uiThemeCss.replace(regex, `$1--${to}-$2`)
+        uiThemeCss = uiThemeCss.replaceAll(regex, `$1--${to}-$2`)
     }
 
     writeFile(uiThemePath, uiThemeCss)
@@ -131,7 +131,7 @@ const run = async (): Promise<void> => {
     console.log('\n✅ ui-theme.css updated successfully\n')
 
     // Normalize colors.css by removing `--color-` prefix
-    const updatedColorsCss = colorsCss.replace(/--color-([a-z0-9-]+):/g, '--$1:')
+    const updatedColorsCss = colorsCss.replaceAll(/--color-([a-z0-9-]+):/g, '--$1:')
 
     if (updatedColorsCss !== colorsCss) {
         writeFile(colorsPath, updatedColorsCss)

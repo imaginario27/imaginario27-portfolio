@@ -1,7 +1,6 @@
 // @vitest-environment nuxt
-import { describe, it, expect } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import PortfolioItem from '~/components/portfolio/PortfolioItem.vue'
+import PortfolioItem from '@/components/portfolio/PortfolioItem.vue'
 
 const makeItem = (overrides: Partial<PortfolioItem> = {}): PortfolioItem => ({
     id: '1',

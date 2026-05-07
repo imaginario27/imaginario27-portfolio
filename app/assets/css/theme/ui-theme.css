@@ -453,9 +453,7 @@
     --color-theme-warning-800: var(--amber-200);
     --color-theme-warning-900: var(--amber-100);
     --color-theme-warning-950: var(--amber-50);
-}
 
-:root {
     /* number */
     --opacity-disabled: var(--opacity-50);
     --radius-button: var(--rounded-base);

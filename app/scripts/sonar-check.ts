@@ -15,7 +15,7 @@ interface IssuesResponse {
     issues: Issue[]
 }
 
-async function fetchIssues(statuses: string, page = 1): Promise<IssuesResponse> {
+const fetchIssues = async (statuses: string, page = 1): Promise<IssuesResponse> => {
     const token = process.env.SONAR_TOKEN
     if (!token) {
         console.error('❌ SONAR_TOKEN environment variable is not set.')
@@ -43,7 +43,7 @@ async function fetchIssues(statuses: string, page = 1): Promise<IssuesResponse> 
     return res.json() as Promise<IssuesResponse>
 }
 
-function severityIcon(severity: string): string {
+const severityIcon = (severity: string): string => {
     const icons: Record<string, string> = {
         BLOCKER: '🔴',
         CRITICAL: '🟠',
@@ -54,11 +54,15 @@ function severityIcon(severity: string): string {
     return icons[severity] || '⚪'
 }
 
-function stripPrefix(component: string): string {
+const sanitize = (input: string): string => {
+    return input.replace(/[\r\n]/g, '').slice(0, 500)
+}
+
+const stripPrefix = (component: string): string => {
     return component.replace(`${PROJECT_KEY}:`, '')
 }
 
-async function fetchLastAnalysis(): Promise<string | null> {
+const fetchLastAnalysis = async (): Promise<string | null> => {
     const token = process.env.SONAR_TOKEN
     const params = new URLSearchParams({
         project: PROJECT_KEY,
@@ -75,7 +79,7 @@ async function fetchLastAnalysis(): Promise<string | null> {
     return data.analyses?.[0]?.date || null
 }
 
-function formatTimeSince(dateStr: string): string {
+const formatTimeSince = (dateStr: string): string => {
     const diff = Date.now() - new Date(dateStr).getTime()
     const minutes = Math.floor(diff / 60000)
     if (minutes < 60) return `${minutes} minute(s) ago`
@@ -85,7 +89,7 @@ function formatTimeSince(dateStr: string): string {
     return `${days} day(s) ago`
 }
 
-async function main() {
+const checkSonar = async () => {
     const lastAnalysis = await fetchLastAnalysis()
     if (!lastAnalysis) {
         console.warn('⚠️  No scan found on SonarCloud. Run "npm run sonar" first.\n')
@@ -115,8 +119,12 @@ async function main() {
     for (const issue of openIssues.issues) {
         counts[issue.severity] = (counts[issue.severity] || 0) + 1
         const loc = issue.line ? `:${issue.line}` : ''
-        console.log(`  ${severityIcon(issue.severity)} [${issue.severity}] ${stripPrefix(issue.component)}${loc}`)
-        console.log(`    ${issue.message}\n`)
+        const icon = severityIcon(issue.severity)
+        const component = sanitize(stripPrefix(issue.component))
+        const severity = sanitize(issue.severity)
+        const message = sanitize(issue.message)
+        console.log(`  ${icon} [${severity}] ${component}${loc}`)
+        console.log(`    ${message}\n`)
     }
 
     if (total > 100) {
@@ -132,4 +140,4 @@ async function main() {
     process.exitCode = 1
 }
 
-main()
+await checkSonar()

@@ -118,6 +118,15 @@ export default defineNuxtConfig({
         },
     },
 
+    typescript: {
+        tsConfig: {
+            include: ['../tests/**/*'],
+            compilerOptions: {
+                types: ['vitest/globals'],
+            },
+        },
+    },
+
     vite: {
         plugins: [tailwindcss()],
     },

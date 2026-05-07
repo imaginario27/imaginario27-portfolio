@@ -26,7 +26,6 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
         paginationMode,
         pageSize,
         limit,
-        layout,
         columnsSm,
         columnsMd,
         columnsLg,
@@ -36,7 +35,11 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
     } = options
 
     // Filtering
-    const filterValue = ref<string | string[]>(filterIsMultiple.value ? [] : filterHasAllButton.value ? '__all__' : '')
+    const getInitialFilterValue = (): string | string[] => {
+        if (filterIsMultiple.value) return []
+        return filterHasAllButton.value ? '__all__' : ''
+    }
+    const filterValue = ref<string | string[]>(getInitialFilterValue())
 
     const onFilterChange = (v: string | string[]) => {
         filterValue.value = v
@@ -145,8 +148,8 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
     const breakpoint = ref<'sm' | 'md' | 'lg'>('sm')
 
     const updateBreakpoint = () => {
-        if (typeof window === 'undefined') return
-        const w = window.innerWidth
+        if (globalThis.window === undefined) return
+        const w = globalThis.window.innerWidth
         if (w >= 1024) breakpoint.value = 'lg'
         else if (w >= 768) breakpoint.value = 'md'
         else breakpoint.value = 'sm'
@@ -154,11 +157,11 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
 
     onMounted(() => {
         updateBreakpoint()
-        window.addEventListener('resize', updateBreakpoint, { passive: true })
+        globalThis.window.addEventListener('resize', updateBreakpoint, { passive: true })
     })
     onBeforeUnmount(() => {
-        if (typeof window !== 'undefined') {
-            window.removeEventListener('resize', updateBreakpoint)
+        if (globalThis.window !== undefined) {
+            globalThis.window.removeEventListener('resize', updateBreakpoint)
         }
     })
 

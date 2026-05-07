@@ -304,7 +304,7 @@ const fetchMedia = async () => {
 
 const stripHtml = (html: string | null) => {
     if (!html) return ''
-    return html.replace(/<[^>]+>/g, '').trim()
+    return html.replaceAll(/<[^>]+>/g, '').trim()
 }
 
 watch(
@@ -356,9 +356,10 @@ const lightboxIndex = ref(0)
 
 const onItemClick = (image: GalleryImage) => {
     const idx = visibleImages.value.findIndex((i) => i.id === image.id)
-    emit('select', image, idx >= 0 ? idx : 0)
+    const safeIdx = Math.max(0, idx)
+    emit('select', image, safeIdx)
     if (props.enableLightbox) {
-        lightboxIndex.value = idx >= 0 ? idx : 0
+        lightboxIndex.value = safeIdx
         lightboxOpen.value = true
     }
 }

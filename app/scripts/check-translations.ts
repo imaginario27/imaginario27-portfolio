@@ -1,6 +1,6 @@
-import { existsSync, readFileSync, unlinkSync } from 'fs'
-import { resolve, dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { existsSync, readFileSync, unlinkSync } from 'node:fs'
+import { resolve, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 interface TranslationConfig {
     missingFile: string
@@ -11,7 +11,7 @@ const __dirname = dirname(__filename)
 const rootDir = resolve(__dirname, '../..')
 const config: TranslationConfig = JSON.parse(readFileSync(resolve(rootDir, 'i18n/translation.config.json'), 'utf-8'))
 
-function hasMissingTranslations(missingPath: string): boolean {
+const hasMissingTranslations = (missingPath: string): boolean => {
     if (!existsSync(missingPath)) {
         return false
     }
@@ -21,7 +21,7 @@ function hasMissingTranslations(missingPath: string): boolean {
     return Object.values(missing).some((langEntries) => Object.keys(langEntries ?? {}).length > 0)
 }
 
-async function main(): Promise<void> {
+const checkTranslations = async (): Promise<void> => {
     const missingPath = resolve(rootDir, config.missingFile)
 
     // Remove stale output before regenerating translation status.
@@ -39,4 +39,4 @@ async function main(): Promise<void> {
     console.log('\n  ✓ No missing translations detected.')
 }
 
-main()
+await checkTranslations()

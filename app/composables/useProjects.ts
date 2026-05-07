@@ -3,7 +3,7 @@ const PROJECT_SEGMENTS = ['/proyectos/', '/projekte/', '/projects/']
 export const useProjects = () => {
     const isProjectPath = (path: string): boolean => PROJECT_SEGMENTS.some((seg) => path.includes(seg))
 
-    const getProjectSlug = (path: string): string => path.split('/').filter(Boolean).pop() ?? ''
+    const getProjectSlug = (path: string): string => path.split('/').findLast(Boolean) ?? ''
 
     const fetchProjectSeo = async (slug: string) => {
         const res = await GqlGetProjectSEO({ slug })

@@ -1,6 +1,6 @@
-import { readFileSync, writeFileSync, existsSync, unlinkSync } from 'fs'
-import { resolve, dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { readFileSync, writeFileSync, existsSync, unlinkSync } from 'node:fs'
+import { resolve, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 interface TranslationConfig {
     mainLanguage: string
@@ -14,7 +14,7 @@ const __dirname = dirname(__filename)
 const rootDir = resolve(__dirname, '../..')
 const config: TranslationConfig = JSON.parse(readFileSync(resolve(rootDir, 'i18n/translation.config.json'), 'utf-8'))
 
-function main(): void {
+const main = (): void => {
     const missingPath = resolve(rootDir, config.missingFile)
 
     if (!existsSync(missingPath)) {
@@ -47,7 +47,7 @@ function main(): void {
         }
 
         const sorted = Object.keys(locale)
-            .sort()
+            .sort((a, b) => a.localeCompare(b))
             .reduce(
                 (acc, k) => {
                     acc[k] = locale[k]

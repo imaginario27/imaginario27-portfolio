@@ -2,8 +2,13 @@ const TAXONOMY_KEYS = ['projectCategories', 'projectTags', 'tecnologias', 'forma
 
 const stripHtml = (html: string | null | undefined) => {
     if (!html) return ''
-    return html.replace(/<[^>]+>/g, '').trim()
+    return html.replaceAll(/<[^>]+>/g, '').trim()
 }
+
+const toGalleryImage = (p: PortfolioItem, taxonomyKey: string): GalleryImage => ({
+    ...p.featuredImage,
+    tags: (p.taxonomies[taxonomyKey] ?? []).map((t) => t.slug),
+})
 
 const mapNodeToPortfolioItem = (node: ProjectNode): PortfolioItem | null => {
     const img = node.featuredImage?.node
@@ -79,13 +84,11 @@ export const usePortfolioData = () => {
         }))
     }
 
-    const imagesWithTags = (taxonomyKey: string) =>
-        computed<GalleryImage[]>(() =>
-            items.value.map((p) => ({
-                ...p.featuredImage,
-                tags: (p.taxonomies[taxonomyKey] ?? []).map((t) => t.slug),
-            })),
-        )
+    const imagesWithTags = (taxonomyKey: string) => {
+        return computed<GalleryImage[]>(() => {
+            return items.value.map((p) => toGalleryImage(p, taxonomyKey))
+        })
+    }
 
     const itemsByImageId = computed(() => {
         const map = new Map<string, PortfolioItem>()
