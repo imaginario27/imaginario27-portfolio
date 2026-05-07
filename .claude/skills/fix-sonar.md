@@ -12,8 +12,8 @@ Run SonarQube checks and fix all reported issues.
 1. Run `npm run sonar:check` and capture the full output.
 2. Parse the output to identify all issues (code smells, bugs, vulnerabilities, duplications, etc.).
 3. For each issue:
-   - Read the affected file and understand the context.
-   - Apply the appropriate fix following the project's coding conventions (arrow functions, Tailwind utilities, DS tokens, no barrel files, etc.).
+    - Read the affected file and understand the context.
+    - Apply the appropriate fix following the project's coding conventions (arrow functions, Tailwind utilities, DS tokens, no barrel files, etc.).
 4. After fixing all issues, run `npm run sonar` to regenerate the report, then run `npm run sonar:check` to verify the fixes resolved the problems.
 5. If new issues appear or some persist, repeat the fix cycle (fix → `npm run sonar` → `npm run sonar:check`).
 6. Report a summary of what was fixed.
