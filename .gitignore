@@ -25,3 +25,6 @@ logs
 
 # WPNuxt generated files
 .queries/
+
+# SonarQube
+.scannerwork
