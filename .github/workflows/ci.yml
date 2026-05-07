@@ -51,7 +51,7 @@ jobs:
               if: always()
               with:
                   name: coverage
-                  path: coverage/
+                  path: tests/coverage/
                   retention-days: 1
 
     sonar:
@@ -70,7 +70,7 @@ jobs:
             - uses: actions/download-artifact@v4
               with:
                   name: coverage
-                  path: coverage/
+                  path: tests/coverage/
             - run: npm run sonar
               env:
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
