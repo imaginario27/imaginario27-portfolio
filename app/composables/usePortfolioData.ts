@@ -2,7 +2,8 @@ const TAXONOMY_KEYS = ['projectCategories', 'projectTags', 'tecnologias', 'forma
 
 const stripHtml = (html: string | null | undefined) => {
     if (!html) return ''
-    return html.replaceAll(/<[^>]+>/g, '').trim()
+    const doc = new DOMParser().parseFromString(html, 'text/html')
+    return (doc.body.textContent ?? '').trim()
 }
 
 const toGalleryImage = (p: PortfolioItem, taxonomyKey: string): GalleryImage => ({

@@ -18,7 +18,7 @@ const deleteIfExists = (filePath: string) => {
 }
 
 const extractVarKey = (line: string): string | null => {
-    const match = /^--[\w-]+:\s*[^;]+;/.exec(line)
+    const match = /^(--[\w-]+)\s*:/.exec(line)
     if (!match) return null
     const [key] = line.split(':').map((s) => s.trim().replace(/;$/, ''))
     return key || null
