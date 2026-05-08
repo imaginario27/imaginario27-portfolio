@@ -1,5 +1,11 @@
-const PROJECT_KEY = 'imaginario27'
-const BASE_URL = 'https://sonarcloud.io/api'
+const PROJECT_KEY = 'imaginario27_imaginario27-portfolio_6e485fe9-dff3-4a8b-85d8-444661076ebd'
+
+const SONAR_HOST_URL = process.env.SONAR_HOST_URL
+if (!SONAR_HOST_URL) {
+    console.error('❌ SONAR_HOST_URL environment variable is not set.')
+    process.exit(1)
+}
+const BASE_URL = `${SONAR_HOST_URL.replace(/\/$/, '')}/api`
 
 interface Issue {
     key: string
@@ -35,7 +41,7 @@ const fetchIssues = async (statuses: string, page = 1): Promise<IssuesResponse> 
     })
 
     if (!res.ok) {
-        console.error(`❌ SonarCloud API error: ${res.status} ${res.statusText}`)
+        console.error(`❌ SonarQube API error: ${res.status} ${res.statusText}`)
         process.exitCode = 1
         return { total: 0, issues: [] }
     }
@@ -94,7 +100,7 @@ const formatTimeSince = (dateStr: string): string => {
 const checkSonar = async () => {
     const lastAnalysis = await fetchLastAnalysis()
     if (!lastAnalysis) {
-        console.warn('⚠️  No scan found on SonarCloud. Run "npm run sonar" first.\n')
+        console.warn('⚠️  No scan found on SonarQube. Run "npm run sonar" first.\n')
         process.exitCode = 1
         return
     }
@@ -110,11 +116,11 @@ const checkSonar = async () => {
     const total = openIssues.total
 
     if (total === 0) {
-        console.log('✅ No open SonarCloud issues found.')
+        console.log('✅ No open SonarQube issues found.')
         return
     }
 
-    console.log(`\n⚠️  ${Number(total)} open SonarCloud issue(s) found:\n`)
+    console.log(`\n⚠️  ${Number(total)} open SonarQube issue(s) found:\n`)
 
     const counts: Record<string, number> = {}
 
@@ -130,14 +136,14 @@ const checkSonar = async () => {
     }
 
     if (total > 100) {
-        console.log(`  ... and ${total - 100} more (check SonarCloud dashboard)\n`)
+        console.log(`  ... and ${total - 100} more (check SonarQube dashboard)\n`)
     }
 
     console.log('Summary:')
     for (const [severity, count] of Object.entries(counts)) {
         console.log(`  ${severityIcon(severity)} ${severity}: ${count}`)
     }
-    console.log(`\n🔗 https://sonarcloud.io/project/issues?id=${PROJECT_KEY}&resolved=false\n`)
+    console.log(`\n🔗 ${SONAR_HOST_URL}/project/issues?id=${PROJECT_KEY}&resolved=false\n`)
 
     process.exitCode = 1
 }
