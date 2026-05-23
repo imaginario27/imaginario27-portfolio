@@ -31,3 +31,12 @@ tests/coverage
 
 # SonarQube
 .scannerwork
+
+# Package testing
+nsecure-result.json
+
+# Claude
+.claude/blocked-access.log
+
+# Others
+inspiration

@@ -30,12 +30,6 @@ Create a pull request from the current branch to `main`.
 
 (If all changes share one topic, skip the headings and just use a flat bullet list.)
 
-## Test plan
-
-- [ ] <testing step>
-- [ ] <testing step>
-```
-
 5. **Show the user a preview** of the full PR (title + body) before creating it.
 6. Wait for user approval or edits.
 7. Only after approval:
@@ -52,3 +46,4 @@ Create a pull request from the current branch to `main`.
 - **Never** include "Generated with Claude Code" or similar attribution lines.
 - Never create the PR without showing the preview first and getting approval.
 - If there are uncommitted changes, ask the user if they want to commit first (suggest using `/commit`).
+```

@@ -6,7 +6,7 @@ export const useProjects = () => {
     const getProjectSlug = (path: string): string => path.split('/').findLast(Boolean) ?? ''
 
     const fetchProjectSeo = async (slug: string) => {
-        const res = await GqlGetProjectSEO({ slug })
+        const res = await executeQuery('GetProjectSEO', { slug })
         return {
             seo: res.project?.seo ?? null,
             title: res.project?.title ?? null,

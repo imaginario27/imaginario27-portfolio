@@ -267,7 +267,7 @@ const fetchMedia = async () => {
     pending.value = true
     try {
         const ids = props.mediaIds.map(String)
-        const { data } = await useAsyncGql({
+        const { data } = await useAsyncQuery({
             operation: 'GalleryMediaItems',
             variables: { ids },
         })

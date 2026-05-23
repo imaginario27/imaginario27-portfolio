@@ -24,7 +24,7 @@ export const useRouteWPSeo = async () => {
     })
 
     const fetchPageSeo = async (pageSlug: string) => {
-        const res = await GqlGetPageSEO({ slug: pageSlug })
+        const res = await executeQuery('GetPageSEO', { slug: pageSlug })
         return {
             seo: res.page?.seo ?? null,
             title: res.page?.title ?? null,

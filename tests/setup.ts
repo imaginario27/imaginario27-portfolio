@@ -1,14 +1,6 @@
-import { beforeAll, afterAll } from 'vitest'
+import { config } from '@vue/test-utils'
 
-const originalWarn = console.warn
-
-beforeAll(() => {
-    console.warn = (...args: unknown[]) => {
-        if (typeof args[0] === 'string' && args[0].includes('No match found for location')) return
-        originalWarn(...args)
-    }
-})
-
-afterAll(() => {
-    console.warn = originalWarn
-})
+config.global.mocks = {
+    ...(config.global.mocks ?? {}),
+    $t: (key: string) => key,
+}

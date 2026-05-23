@@ -33,7 +33,6 @@
 </template>
 <script setup lang="ts">
 // Imports
-import { MenuLocationEnum } from '#gql/default'
 import logoLight from '~~/public/images/logo/imaginario27-logo-color.svg?raw'
 import logoDark from '~~/public/images/logo/imaginario27-logo-outline-white.svg?raw'
 
@@ -73,7 +72,7 @@ const localePath = useLocalePath()
 const menuLanguage = computed(() => currentLanguage.value || locale.value || 'en')
 
 // Data
-const { data: menu } = await useAsyncGql({
+const { data: menu } = await useAsyncQuery({
     operation: 'Menu',
     variables: {
         language: menuLanguage,
@@ -86,14 +85,14 @@ const { data: menu } = await useAsyncGql({
 
 // Computed
 const menuItems = computed<MenuItem[]>(() => {
-    const nodes = menu.value?.menuItems?.nodes ?? []
+    const nodes: MenuNode[] = menu.value?.menuItems?.nodes ?? []
 
     return nodes
-        .filter((item) => !item.parentId)
-        .map((parent) => {
+        .filter((item: MenuNode) => !item.parentId)
+        .map((parent: MenuNode) => {
             const children = nodes
-                .filter((item) => item.parentId === parent.id)
-                .map((child) => ({
+                .filter((item: MenuNode) => item.parentId === parent.id)
+                .map((child: MenuNode) => ({
                     text: child.label ?? '',
                     to: localePath(child.uri || '/'),
                 }))

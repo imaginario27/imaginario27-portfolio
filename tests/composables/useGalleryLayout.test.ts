@@ -1,12 +1,15 @@
-// @vitest-environment nuxt
-import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { mount } from '@vue/test-utils'
+import { useGalleryLayout } from '~/composables/useGalleryLayout'
+import type { GalleryImage } from '~/models/types/gallery'
+import { GalleryLayout, GalleryPaginationMode, GallerySortBy, GalleryWidowAlign } from '~/models/enums/gallery'
+import { defineComponent, ref } from 'vue'
 
-const img = (id: string, w: number, h: number, tags?: string[]): GalleryImage => ({
+const img = (id: string, width: number, height: number, tags?: string[]): GalleryImage => ({
     id,
     src: `/${id}.jpg`,
     alt: id,
-    width: w,
-    height: h,
+    width,
+    height,
     tags,
 })
 
@@ -28,9 +31,9 @@ const defaultOptions = (overrides: Partial<Record<string, unknown>> = {}) => ({
     widowAlign: ref(GalleryWidowAlign.JUSTIFY),
 })
 
-const withSetup = async <T>(fn: () => T): Promise<T> => {
+const withSetup = <T>(fn: () => T): T => {
     let result: T = undefined as T
-    await mountSuspended(
+    mount(
         defineComponent({
             setup: () => {
                 result = fn()
@@ -42,42 +45,38 @@ const withSetup = async <T>(fn: () => T): Promise<T> => {
 }
 
 describe('useGalleryLayout', () => {
-    it('returns all items when no filter or pagination', async () => {
+    it('returns all items when no filter or pagination', () => {
         const images = [img('a', 100, 100), img('b', 200, 200)]
-        const { visibleImages } = await withSetup(() => useGalleryLayout(defaultOptions({ items: images })))
+        const { visibleImages } = withSetup(() => useGalleryLayout(defaultOptions({ items: images })))
         expect(visibleImages.value).toHaveLength(2)
     })
 
-    it('filters items by tags when showFilter is enabled', async () => {
+    it('filters items by tags when showFilter is enabled', () => {
         const images = [img('a', 100, 100, ['cat']), img('b', 200, 200, ['dog']), img('c', 300, 300, ['cat', 'dog'])]
-        const opts = defaultOptions({ items: images, showFilter: true })
-        const { visibleImages, onFilterChange } = await withSetup(() => useGalleryLayout(opts))
+        const options = defaultOptions({ items: images, showFilter: true })
+        const { visibleImages, onFilterChange } = withSetup(() => useGalleryLayout(options))
 
         onFilterChange('cat')
         expect(visibleImages.value).toHaveLength(2)
-        expect(visibleImages.value.map((i) => i.id)).toContain('a')
-        expect(visibleImages.value.map((i) => i.id)).toContain('c')
+        expect(visibleImages.value.map((item: GalleryImage) => item.id)).toContain('a')
+        expect(visibleImages.value.map((item: GalleryImage) => item.id)).toContain('c')
     })
 
-    it('sorts by title ascending', async () => {
+    it('sorts by title ascending', () => {
         const images = [img('c', 100, 100), img('a', 200, 200), img('b', 300, 300)]
-        const { visibleImages } = await withSetup(() =>
-            useGalleryLayout(defaultOptions({ items: images, sortBy: GallerySortBy.TITLE_ASC })),
-        )
-        expect(visibleImages.value.map((i) => i.id)).toEqual(['a', 'b', 'c'])
+        const { visibleImages } = withSetup(() => useGalleryLayout(defaultOptions({ items: images, sortBy: GallerySortBy.TITLE_ASC })))
+        expect(visibleImages.value.map((item: GalleryImage) => item.id)).toEqual(['a', 'b', 'c'])
     })
 
-    it('sorts by title descending', async () => {
+    it('sorts by title descending', () => {
         const images = [img('a', 100, 100), img('c', 200, 200), img('b', 300, 300)]
-        const { visibleImages } = await withSetup(() =>
-            useGalleryLayout(defaultOptions({ items: images, sortBy: GallerySortBy.TITLE_DESC })),
-        )
-        expect(visibleImages.value.map((i) => i.id)).toEqual(['c', 'b', 'a'])
+        const { visibleImages } = withSetup(() => useGalleryLayout(defaultOptions({ items: images, sortBy: GallerySortBy.TITLE_DESC })))
+        expect(visibleImages.value.map((item: GalleryImage) => item.id)).toEqual(['c', 'b', 'a'])
     })
 
-    it('paginates items with PAGINATION mode', async () => {
-        const images = Array.from({ length: 10 }, (_, i) => img(`img-${i}`, 100, 100))
-        const { visibleImages, totalPages, onPageChange } = await withSetup(() =>
+    it('paginates items with PAGINATION mode', () => {
+        const images = Array.from({ length: 10 }, (_, index) => img(`img-${index}`, 100, 100))
+        const { visibleImages, totalPages, onPageChange } = withSetup(() =>
             useGalleryLayout(
                 defaultOptions({
                     items: images,
@@ -94,21 +93,21 @@ describe('useGalleryLayout', () => {
         expect(visibleImages.value[0].id).toBe('img-3')
     })
 
-    it('applies limit cap', async () => {
-        const images = Array.from({ length: 10 }, (_, i) => img(`img-${i}`, 100, 100))
-        const { visibleImages } = await withSetup(() => useGalleryLayout(defaultOptions({ items: images, limit: 5 })))
+    it('applies limit cap', () => {
+        const images = Array.from({ length: 10 }, (_, index) => img(`img-${index}`, 100, 100))
+        const { visibleImages } = withSetup(() => useGalleryLayout(defaultOptions({ items: images, limit: 5 })))
         expect(visibleImages.value).toHaveLength(5)
     })
 
-    it('computes grid style based on columns and gap', async () => {
-        const { gridStyle } = await withSetup(() => useGalleryLayout(defaultOptions()))
+    it('computes grid style based on columns and gap', () => {
+        const { gridStyle } = withSetup(() => useGalleryLayout(defaultOptions()))
         expect(gridStyle.value.gap).toBe('8px')
         expect(gridStyle.value.gridTemplateColumns).toContain('repeat(')
     })
 
-    it('has loadMore for LOAD_MORE mode', async () => {
-        const images = Array.from({ length: 10 }, (_, i) => img(`img-${i}`, 100, 100))
-        const { visibleImages, hasMore, loadMore } = await withSetup(() =>
+    it('has loadMore for LOAD_MORE mode', () => {
+        const images = Array.from({ length: 10 }, (_, index) => img(`img-${index}`, 100, 100))
+        const { visibleImages, hasMore, loadMore } = withSetup(() =>
             useGalleryLayout(
                 defaultOptions({
                     items: images,

@@ -55,7 +55,7 @@ export const usePortfolioData = () => {
     const fetchProjects = async (variables?: { first?: number; language?: string }) => {
         pending.value = true
         try {
-            const { data } = await useAsyncGql({
+            const { data } = await useAsyncQuery({
                 operation: 'ProjectsList',
                 variables: {
                     first: variables?.first ?? 100,

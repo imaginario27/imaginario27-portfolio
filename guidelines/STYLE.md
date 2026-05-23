@@ -1,8 +1,12 @@
 # Style cheat-sheet
 
-### Formatting rule (readability)
+### Formatting rule (Prettier-enforced)
 
-When an element has **more than 3 classes OR more than 3 attributes**, put each on its own line. See GUARDRAILS.md §4a.
+Formatting is owned by Prettier ([.prettierrc](../.prettierrc)): `tabWidth: 4`, `printWidth: 140`, `semi: false`, `singleQuote: true`, `singleAttributePerLine: true`.
+
+- `singleAttributePerLine: true` → any element with 2+ attributes/props is auto-split onto separate lines on save.
+- Class arrays with **more than 3 classes** must be one-per-line (keep manual — Prettier won't always reformat inside the array).
+- Don't hand-format around Prettier — write naturally and let `npm run lint` normalize.
 
 ```vue
 <!-- ≤ 3 classes, ≤ 3 attrs → single line is fine -->
@@ -17,10 +21,10 @@ When an element has **more than 3 classes OR more than 3 attributes**, put each 
 <ActionButton
     :size="ButtonSize.LG"
     :styleType="ButtonStyleType.PRIMARY_BRAND_FILLED"
-    text="Ver proyectos"
+    text="Guardar cambios"
     iconPosition="right"
-    icon="mdi:arrow-right"
-    @click="onClick"
+    icon="mdi:content-save"
+    @click="onSave"
 />
 ```
 
@@ -40,7 +44,7 @@ Then consume the component by its auto-imported name with enum-bound props (no i
 
 **Prefer `search_docs` over `get_doc_page`** — the title/path is usually enough to identify the component, and `get_doc_page` can return payloads that exceed the per-call token cap (spilled to a tool-results file that needs chunked reads). Only pull the full page when you genuinely need the prop/enum table.
 
-### App component style (composing DS components)
+### Component style (composing DS components)
 
 `app/components/toggles/ThemeToggle.vue` (sketch — DS names resolved via Nuxt auto-import):
 
@@ -114,48 +118,16 @@ defineProps({
 </script>
 ```
 
-### Page style (CMS-backed)
+### Page style
 
 `app/pages/<slug>.vue`:
 
 ```vue
-<template>
-    <section :class="['py-section-md']">
-        <h1 :class="['text-text-default', 'text-4xl', 'font-bold']">{{ page?.title }}</h1>
-        <!-- render WP content here -->
-    </section>
-</template>
+<template>template content</template>
 
 <script setup lang="ts">
-definePageMeta({ layout: 'default' })
-
-const route = useRoute()
-const { locale } = useI18n()
-
-const { data: page } = await useAsyncGql({
-    operation: 'Pages',
-    variables: {
-        slug: route.params.slug,
-        language: locale.value,
-    },
-    options: { watch: [locale] },
-})
-
-useWPSeo(page)
+script content
 </script>
-```
-
-### i18n keys
-
-Adding a new key requires all three locale files — `i18n/locales/es.json`, `en.json`, `de.json`:
-
-```jsonc
-// es.json
-{ "theme": { "toggle": "Cambiar tema" } }
-// en.json
-{ "theme": { "toggle": "Toggle theme" } }
-// de.json
-{ "theme": { "toggle": "Thema wechseln" } }
 ```
 
 ### Test style
@@ -182,22 +154,3 @@ describe('ThemeToggle.vue', () => {
     })
 })
 ```
-
-### GraphQL query style
-
-`app/queries/example.gql`:
-
-```graphql
-query Example($slug: ID!, $language: LanguageCodeEnum!) {
-    page(id: $slug, idType: URI) {
-        id
-        title(format: RENDERED)
-        content(format: RENDERED)
-        translation(language: $language) {
-            uri
-        }
-    }
-}
-```
-
-Consumed as `useAsyncGql({ operation: 'Example', variables: { slug, language } })`. Never fetch the GQL endpoint directly — always go through the generated client.

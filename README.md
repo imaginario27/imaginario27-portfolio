@@ -1,75 +1,67 @@
-# Nuxt Minimal Starter
+# imaginario27-portfolio
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Portfolio website for [imaginario27.com](https://imaginario27.com), built with Vue 3, Nuxt 4, and Tailwind CSS v4.
+
+Content is sourced from a headless WordPress instance via GraphQL. The UI consumes the [AirUI](https://www.npmjs.com/package/@imaginario27/air-ui-ds) design system as Nuxt layers.
+
+## Stack
+
+- **Framework:** Nuxt 4 + Vue 3
+- **Styling:** Tailwind CSS v4 (theme-based, no `tailwind.config.*`)
+- **Design system:** `@imaginario27/air-ui-ds` + `@imaginario27/air-ui-utils` (Nuxt layers)
+- **CMS:** WordPress + GraphQL (`nuxt-graphql-client`)
+- **i18n:** `@nuxtjs/i18n` — Spanish (default), English, German
+- **State:** Pinia
+- **Testing:** Vitest + `@vue/test-utils` + `happy-dom`
 
 ## Setup
 
-Make sure to install dependencies:
-
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+## Development
 
 ```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
-
-Build the application for production:
+## Build
 
 ```bash
-# npm
 npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+npm run preview   # preview production build locally
 ```
 
-Locally preview production build:
+## Testing
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+npm test          # single run
+npm run test:watch # watch mode
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Other commands
+
+| Command                        | Description                               |
+| ------------------------------ | ----------------------------------------- |
+| `npm run generate-theme`       | Regenerate local theme CSS from DS tokens |
+| `npm run update-theme-colors`  | Update `ui-theme.css` color mappings      |
+| `npm run update-design-system` | Bump AirUI packages to latest             |
+| `npx vue-tsc --noEmit`         | Run TypeScript type checking              |
+
+## Project structure
+
+All app code lives under `app/` (Nuxt 4 `srcDir`). See [guidelines/ARCHITECTURE.md](guidelines/ARCHITECTURE.md) for the full breakdown.
+
+```
+app/
+  components/     # Auto-imported Vue components
+  composables/    # Composables (useGraphQL, useWPSeo, usePortfolioData, ...)
+  pages/          # File-based routes
+  stores/         # Pinia stores
+  models/         # Shared types & enums (auto-imported)
+  queries/        # GraphQL .gql operations
+  assets/css/     # Tailwind v4 theme + tokens
+i18n/locales/     # es.json, en.json, de.json
+tests/            # Vitest specs (mirrors app/ paths)
+```
