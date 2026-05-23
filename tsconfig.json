@@ -17,5 +17,8 @@
         {
             "path": "./tsconfig.scripts.json"
         }
-    ]
+    ],
+    "compilerOptions": {
+        "types": ["vitest/globals"]
+    }
 }

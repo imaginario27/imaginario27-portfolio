@@ -243,8 +243,8 @@ const toolbarButtonClass = [
 // Watchers
 watch(
     () => props.initialIndex,
-    (v) => {
-        currentIndex.value = v
+    (index) => {
+        currentIndex.value = index
     },
 )
 
@@ -270,13 +270,13 @@ onBeforeUnmount(() => {
 const current = computed(() => props.images[currentIndex.value])
 
 // Methods
-const setIndex = (i: number) => {
-    const len = props.images.length
-    if (!len) return
-    const idx = props.loop ? ((i % len) + len) % len : Math.max(0, Math.min(len - 1, i))
-    if (idx === currentIndex.value) return
-    currentIndex.value = idx
-    emit('update:index', idx)
+const setIndex = (position: number) => {
+    const length = props.images.length
+    if (!length) return
+    const normalizedIndex = props.loop ? ((position % length) + length) % length : Math.max(0, Math.min(length - 1, position))
+    if (normalizedIndex === currentIndex.value) return
+    currentIndex.value = normalizedIndex
+    emit('update:index', normalizedIndex)
 }
 
 const next = () => {
@@ -312,30 +312,30 @@ const slideOffsetStyle = computed(() => {
 })
 
 // Swipe event handlers
-const onPointerDown = (e: PointerEvent) => {
-    if ((e.target as HTMLElement).closest('button')) return
+const onPointerDown = (event: PointerEvent) => {
+    if ((event.target as HTMLElement).closest('button')) return
     isDragging.value = true
     wasInteracting = false
-    startX = e.clientX
-    startY = e.clientY
-    pointerId = e.pointerId
-    swipeAreaEl.value?.setPointerCapture(e.pointerId)
+    startX = event.clientX
+    startY = event.clientY
+    pointerId = event.pointerId
+    swipeAreaEl.value?.setPointerCapture(event.pointerId)
 }
 
-const onPointerMove = (e: PointerEvent) => {
-    if (!isDragging.value || e.pointerId !== pointerId) return
-    const dx = e.clientX - startX
-    const dy = e.clientY - startY
-    if (Math.abs(dx) > Math.abs(dy)) {
-        dragOffsetX.value = dx
+const onPointerMove = (event: PointerEvent) => {
+    if (!isDragging.value || event.pointerId !== pointerId) return
+    const deltaX = event.clientX - startX
+    const deltaY = event.clientY - startY
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        dragOffsetX.value = deltaX
     }
-    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+    if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
         wasInteracting = true
     }
 }
 
-const onPointerUp = (e: PointerEvent) => {
-    if (!isDragging.value || e.pointerId !== pointerId) return
+const onPointerUp = (event: PointerEvent) => {
+    if (!isDragging.value || event.pointerId !== pointerId) return
     isDragging.value = false
 
     if (Math.abs(dragOffsetX.value) > SWIPE_THRESHOLD && props.images.length > 1) {

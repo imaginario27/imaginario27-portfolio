@@ -4,7 +4,7 @@ export const useRouteWPSeo = async () => {
     const { isProjectPath, getProjectSlug, fetchProjectSeo } = useProjects()
 
     const stripLocale = (path: string): string => {
-        const codes = (locales.value as Array<{ code: string }>).map((l) => l.code)
+        const codes = (locales.value as Array<{ code: string }>).map((locale) => locale.code)
         for (const code of codes) {
             if (code === defaultLocale) continue
             if (path === `/${code}`) return '/'
@@ -24,10 +24,10 @@ export const useRouteWPSeo = async () => {
     })
 
     const fetchPageSeo = async (pageSlug: string) => {
-        const res = await GqlGetPageSEO({ slug: pageSlug })
+        const result = await executeQuery('GetPageSEO', { slug: pageSlug })
         return {
-            seo: res.page?.seo ?? null,
-            title: res.page?.title ?? null,
+            seo: result.page?.seo ?? null,
+            title: result.page?.title ?? null,
         }
     }
 

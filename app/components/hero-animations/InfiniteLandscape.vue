@@ -172,11 +172,11 @@ onMounted(() => {
     const resize = () => {
         const container = containerRef.value
         if (!container) return
-        const w = container.clientWidth
-        const h = container.clientHeight
-        camera.aspect = w / h
+        const containerWidth = container.clientWidth
+        const containerHeight = container.clientHeight
+        camera.aspect = containerWidth / containerHeight
         camera.updateProjectionMatrix()
-        renderer.setSize(w, h, false)
+        renderer.setSize(containerWidth, containerHeight, false)
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     }
 
@@ -194,12 +194,12 @@ onMounted(() => {
 
     resizeHandler = resize
     window.addEventListener('resize', resizeHandler)
-    const ro = new ResizeObserver(resize)
-    if (container) ro.observe(container)
+    const resizeObserver = new ResizeObserver(resize)
+    if (container) resizeObserver.observe(container)
     resize()
     renderLoop()
 
-    onUnmounted(() => ro.disconnect())
+    onUnmounted(() => resizeObserver.disconnect())
 
     watch(isDark, (dark) => {
         plane.uniforms.uColor.value.setHex(dark ? 0xffffff : 0x000000)

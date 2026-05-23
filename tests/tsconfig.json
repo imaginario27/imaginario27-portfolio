@@ -1,0 +1,11 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "types": ["vitest/globals", "@nuxt/test-utils", "happy-dom"],
+        "paths": {
+            "~/*": ["../app/*"],
+            "@/*": ["../app/*"]
+        }
+    },
+    "include": ["**/*.ts"]
+}

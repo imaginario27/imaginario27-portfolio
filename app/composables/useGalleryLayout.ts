@@ -41,22 +41,22 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
     }
     const filterValue = ref<string | string[]>(getInitialFilterValue())
 
-    const onFilterChange = (v: string | string[]) => {
-        filterValue.value = v
+    const onFilterChange = (value: string | string[]) => {
+        filterValue.value = value
         currentPage.value = 1
         visibleCount.value = initialVisible.value
     }
 
     const filtered = computed<GalleryImage[]>(() => {
         if (!showFilter.value) return items.value
-        const v = filterValue.value
-        const isAll = (Array.isArray(v) && v.length === 0) || v === '__all__' || v === ''
+        const selection = filterValue.value
+        const isAll = (Array.isArray(selection) && selection.length === 0) || selection === '__all__' || selection === ''
         if (isAll) return items.value
 
-        const wanted = Array.isArray(v) ? v : [v]
-        return items.value.filter((img) => {
-            const tags = img.tags ?? []
-            return wanted.some((w) => tags.includes(w))
+        const wanted = Array.isArray(selection) ? selection : [selection]
+        return items.value.filter((image) => {
+            const tags = image.tags ?? []
+            return wanted.some((tag) => tags.includes(tag))
         })
     })
 
@@ -65,9 +65,9 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
         const list = [...filtered.value]
         switch (sortBy.value) {
             case GallerySortBy.TITLE_ASC:
-                return list.sort((a, b) => (a.alt || '').localeCompare(b.alt || ''))
+                return list.sort((first, second) => (first.alt || '').localeCompare(second.alt || ''))
             case GallerySortBy.TITLE_DESC:
-                return list.sort((a, b) => (b.alt || '').localeCompare(a.alt || ''))
+                return list.sort((first, second) => (second.alt || '').localeCompare(first.alt || ''))
             case GallerySortBy.RANDOM:
                 for (let i = list.length - 1; i > 0; i--) {
                     const j = Math.trunc(Math.random() * (i + 1))
@@ -108,29 +108,29 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
 
     watch(
         initialVisible,
-        (v) => {
-            if (visibleCount.value === 0) visibleCount.value = v
+        (count) => {
+            if (visibleCount.value === 0) visibleCount.value = count
         },
         { immediate: true },
     )
 
-    const onPageChange = (p: number) => {
-        currentPage.value = p
+    const onPageChange = (page: number) => {
+        currentPage.value = page
     }
 
     const visibleImages = computed<GalleryImage[]>(() => {
-        const ds = cappedDataset.value
+        const dataset = cappedDataset.value
         switch (paginationMode.value) {
             case GalleryPaginationMode.PAGINATION: {
                 const start = (currentPage.value - 1) * pageSize.value
-                return ds.slice(start, start + pageSize.value)
+                return dataset.slice(start, start + pageSize.value)
             }
             case GalleryPaginationMode.LOAD_MORE:
             case GalleryPaginationMode.INFINITE:
-                return ds.slice(0, visibleCount.value || initialVisible.value)
+                return dataset.slice(0, visibleCount.value || initialVisible.value)
             case GalleryPaginationMode.NONE:
             default:
-                return ds
+                return dataset
         }
     })
 
@@ -153,9 +153,9 @@ export const useGalleryLayout = (options: UseGalleryLayoutOptions) => {
 
     const updateBreakpoint = () => {
         if (globalThis.window === undefined) return
-        const w = globalThis.window.innerWidth
-        if (w >= 1024) breakpoint.value = 'lg'
-        else if (w >= 768) breakpoint.value = 'md'
+        const windowWidth = globalThis.window.innerWidth
+        if (windowWidth >= 1024) breakpoint.value = 'lg'
+        else if (windowWidth >= 768) breakpoint.value = 'md'
         else breakpoint.value = 'sm'
     }
 

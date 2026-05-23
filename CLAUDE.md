@@ -1,4 +1,4 @@
-# imaginario27-portfolio — Claude project rules
+# Imaginario27 Portfolio
 
 ## Project
 
@@ -7,7 +7,7 @@
 - [`@imaginario27/air-ui-ds`](../node_modules/@imaginario27/air-ui-ds) — components + theme tokens
 - [`@imaginario27/air-ui-utils`](../node_modules/@imaginario27/air-ui-utils) — composables + pure utils
 
-Content comes from a headless WordPress via `nuxt-graphql-client` (`GQL_HOST`, default `https://imaginario27.com/graphql`). Stack: Nuxt 4.4.2, Vue 3.5.31, Tailwind 4.2.2, TypeScript 6.0.2, Pinia, VueUse, `@nuxt/content` 3, `@nuxtjs/i18n` (es/en/de, default `es`), `@nuxt/image`, `three`, `vue3-toastify`, Vitest + `@vue/test-utils` + `happy-dom`.
+Content comes from a headless WordPress via a GraphQL layer (currently `nuxt-graphql-client`, abstracted behind [app/composables/useGraphQL.ts](app/composables/useGraphQL.ts); `GQL_HOST`, default `https://imaginario27.com/graphql`). Stack: Nuxt 4.4.2, Vue 3.5.31, Tailwind 4.2.2, TypeScript 6.0.2, Pinia, VueUse, `@nuxt/content` 3, `@nuxtjs/i18n` (es/en/de, default `es`), `@nuxt/image`, `three`, `vue3-toastify`, Vitest + `@vue/test-utils` + `happy-dom`.
 
 This is **not** a monorepo. There are no `packages/` or `docs/` folders, no Changesets, no publish pipeline. All app code lives under [app/](app/) (Nuxt 4 `srcDir`).
 
@@ -19,9 +19,9 @@ This is **not** a monorepo. There are no `packages/` or `docs/` folders, no Chan
 | [app/layouts/](app/layouts/)               | `default.vue`                                                                                                                  |
 | [app/pages/](app/pages/)                   | Routes (`index.vue`, `graphql-test.vue`)                                                                                       |
 | [app/stores/](app/stores/)                 | Pinia stores (`useLanguageStore`, `useThemeStore`)                                                                             |
-| [app/composables/](app/composables/)       | App-only composables (e.g. `useWPSeo`)                                                                                         |
+| [app/composables/](app/composables/)       | App-only composables (`useGraphQL`, `useWPSeo`, `usePortfolioData`, etc.)                                                      |
 | [app/models/](app/models/)                 | `enums/`, `types/` — auto-imported via `imports.dirs: ["models/**"]`                                                           |
-| [app/queries/](app/queries/)               | `.gql` files consumed by `nuxt-graphql-client`                                                                                 |
+| [app/queries/](app/queries/)               | `.gql` files consumed by the GraphQL plugin (currently `nuxt-graphql-client`)                                                  |
 | [app/extend/queries/](app/extend/queries/) | GraphQL extensions / fragments                                                                                                 |
 | [app/assets/css/](app/assets/css/)         | `main.css` (Tailwind v4 `@theme`), `theme/` (primitives → colors → ui-theme), `defaults.css`                                   |
 | [app/scripts/](app/scripts/)               | `generate-theme.ts`, `update-ui-theme-colors.ts` (ts-node)                                                                     |
@@ -74,18 +74,37 @@ This project has the AirUI docs MCP server wired in (`claude_ai_AirUI`). Use it 
 
 Existing consumption already follows this: [app/components/layout/WebHeader.vue](app/components/layout/WebHeader.vue) uses `CompactHeader`, `AppLogo`, `DropdownSelect`; [app/components/layout/hero/HomeHero.vue](app/components/layout/hero/HomeHero.vue) uses `ActionButton`; [app/pages/index.vue](app/pages/index.vue) uses `Section` + `SectionBody`. Match that pattern.
 
+## GraphQL wrapper (`useGraphQL.ts`)
+
+All GraphQL calls go through [app/composables/useGraphQL.ts](app/composables/useGraphQL.ts), which wraps the underlying plugin (`nuxt-graphql-client`). If the plugin changes in the future, only this file needs updating.
+
+| Export          | Wraps                 | Use for                                                                                                |
+| --------------- | --------------------- | ------------------------------------------------------------------------------------------------------ |
+| `useAsyncQuery` | `useAsyncGql`         | Reactive / SSR-compatible queries in pages and components. Accepts a string operation or object params |
+| `executeQuery`  | `useGql()[operation]` | Imperative (non-reactive) queries inside composables / functions                                       |
+
+```ts
+// Reactive query (pages / components)
+const { data } = await useAsyncQuery({ operation: 'Menu', variables: { language }, options: { watch: [language] } })
+
+// Imperative query (composables / functions)
+const res = await executeQuery('GetPageSEO', { slug })
+```
+
+**Do not** call `useAsyncGql`, `GqlXxx`, or `useGql()` directly — always go through the wrapper so the plugin can be swapped without touching consumers.
+
 ## Adding a new app-specific component (checklist)
 
 1. Create `app/components/<category>/<ComponentName>.vue` (PascalCase filename = auto-imported name). Reuse existing categories (`layout/`, `toggles/`, `hero-animations/`) or add a new one.
 2. Compose from DS components first. Only add a new component here if the behavior is portfolio-specific (site layout, page sections, WP-data wiring, three.js scenes, etc.).
 3. If a prop uses a fixed value set, prefer a DS enum (auto-imported from the DS layer). Otherwise add one in [app/models/enums/](app/models/enums/). Shared object shapes go in [app/models/types/](app/models/types/).
 4. Write a test at `tests/components/<category>/<ComponentName>.test.ts` mirroring the source path; import the subject via the `~/` or relative alias resolved by `vitest.config.ts`.
-5. Style with Tailwind utilities + semantic DS tokens only (see GUARDRAILS.md).
+5. Style with Tailwind utilities + semantic DS tokens only (see [guidelines/GUARDRAILS.md](guidelines/GUARDRAILS.md)).
 
 ## Adding a new page / route
 
 1. Create `app/pages/<path>.vue`. Use `definePageMeta({ title, description, layout })` as needed.
-2. For CMS-backed pages, fetch via `useAsyncGql({ operation, variables })` using a query from [app/queries/](app/queries/).
+2. For CMS-backed pages, fetch via `useAsyncQuery({ operation, variables })` using a query from [app/queries/](app/queries/).
 3. For SEO, use [app/composables/useWPSeo.ts](app/composables/useWPSeo.ts).
 4. Add translations keys in [i18n/locales/\*.json](i18n/locales/) for all three locales (es/en/de).
 
@@ -93,7 +112,7 @@ Existing consumption already follows this: [app/components/layout/WebHeader.vue]
 
 1. Writing `defineProps<{…}>()` with a TS generic. This repo uses runtime `defineProps({ key: { type: … as PropType<T>, default, validator } })` — match [app/components/layout/WebHeader.vue](app/components/layout/WebHeader.vue).
 2. Adding `<style scoped>` blocks. Components are Tailwind utility-first via `:class="[ … ]"` arrays.
-   2a. Cramming 4+ classes or 4+ props on a single line. If an element has more than 3 classes **or** more than 3 attributes, break each onto its own line (see GUARDRAILS.md §4a). This is not optional.
+   2a. Cramming 4+ classes or 4+ props on a single line. If an element has more than 3 classes **or** more than 3 attributes, break each onto its own line (see [guidelines/GUARDRAILS.md](guidelines/GUARDRAILS.md) §5). This is not optional.
 3. Hardcoding colors (`bg-red-500`, `#fff`). Always use semantic DS tokens (`bg-background-primary-brand-default`, `text-text-neutral-subtle`, `border-border-neutral-subtle`, `text-icon-default`).
 4. Creating a barrel `index.ts`. Nuxt auto-import handles components, composables, and `models/**` — a barrel will duplicate registrations.
 5. Deep-importing from `node_modules/@imaginario27/...` with relative paths. Rely on the layer `extends` — the name is already globally available.
@@ -102,7 +121,8 @@ Existing consumption already follows this: [app/components/layout/WebHeader.vue]
 8. Binding enum-like DS props as raw strings (`type="image"`). Always bind the enum member (`:type="SelectType.IMAGE"`) — the enum is auto-imported from the DS layer.
 9. Forgetting locale coverage. Any user-facing string added to a translation file must exist in `es.json`, `en.json`, and `de.json`.
 10. Calling `npm publish`, `changeset`, or monorepo scripts — none of those apply here.
-11. Re-implementing a util, composable, or store that already exists. Before writing new logic, search [app/utils/](app/utils/), [app/composables/](app/composables/), [app/stores/](app/stores/), the AirUI layers (`@imaginario27/air-ui-ds`, `@imaginario27/air-ui-utils`), and VueUse — reuse or extend instead of duplicating (GUARDRAILS.md §23).
-12. Adding `import` lines for things Nuxt already auto-imports: app components / composables / utils / stores / `models/**`, DS components & enums from the AirUI layers, Vue (`ref`, `computed`, `watch`, …), VueUse, Pinia, and Nuxt runtime (`useAsyncGql`, `useRoute`, `useRuntimeConfig`, `definePageMeta`, …). See GUARDRAILS.md §24.
-13. Declaring shared types, interfaces, or enums inline in a component / composable / util / page. Put `type` / `interface` in [app/models/types/](app/models/types/) and `enum` in [app/models/enums/](app/models/enums/), one concept per file (GUARDRAILS.md §25).
-14. Using named `function` declarations. Always use arrow functions (`const fn = (): ReturnType => { … }`). Remember that arrow functions are not hoisted — declare them before usage.
+11. Re-implementing a util, composable, or store that already exists. Before writing new logic, search [app/utils/](app/utils/), [app/composables/](app/composables/), [app/stores/](app/stores/), the AirUI layers (`@imaginario27/air-ui-ds`, `@imaginario27/air-ui-utils`), and VueUse — reuse or extend instead of duplicating ([guidelines/GUARDRAILS.md](guidelines/GUARDRAILS.md) §24).
+12. Adding `import` lines for things Nuxt already auto-imports: app components / composables / utils / stores / `models/**`, DS components & enums from the AirUI layers, Vue (`ref`, `computed`, `watch`, …), VueUse, Pinia, and Nuxt runtime (`useRoute`, `useRuntimeConfig`, `definePageMeta`, …). The GraphQL wrapper (`useAsyncQuery`, `executeQuery`) is also auto-imported. See [guidelines/GUARDRAILS.md](guidelines/GUARDRAILS.md) §22.
+13. Calling `useAsyncGql`, `GqlXxx`, or `useGql()` directly instead of using the wrapper composable (`useAsyncQuery` / `executeQuery` from [app/composables/useGraphQL.ts](app/composables/useGraphQL.ts)). All GraphQL calls must go through the wrapper.
+14. Declaring shared types, interfaces, or enums inline in a component / composable / util / page. Put `type` / `interface` in [app/models/types/](app/models/types/) and `enum` in [app/models/enums/](app/models/enums/), one concept per file ([guidelines/GUARDRAILS.md](guidelines/GUARDRAILS.md) §23).
+15. Using named `function` declarations. Always use arrow functions (`const fn = (): ReturnType => { … }`). Remember that arrow functions are not hoisted — declare them before usage.

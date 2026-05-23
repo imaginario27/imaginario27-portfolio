@@ -5,9 +5,9 @@ const inputPath = resolve('assets/css/theme/ui-theme.css')
 const outputPath = resolve('assets/css/main.css')
 
 const ensureOutputDir = (filePath: string) => {
-    const dir = dirname(filePath)
-    if (!existsSync(dir)) {
-        mkdirSync(dir, { recursive: true })
+    const directory = dirname(filePath)
+    if (!existsSync(directory)) {
+        mkdirSync(directory, { recursive: true })
     }
 }
 
@@ -20,7 +20,7 @@ const deleteIfExists = (filePath: string) => {
 const extractVarKey = (line: string): string | null => {
     const match = /^(--[\w-]+)\s*:/.exec(line)
     if (!match) return null
-    const [key] = line.split(':').map((s) => s.trim().replace(/;$/, ''))
+    const [key] = line.split(':').map((segment) => segment.trim().replace(/;$/, ''))
     return key || null
 }
 

@@ -1,11 +1,14 @@
-// @vitest-environment nuxt
+import { ref } from 'vue'
+import { useJustifiedLayout } from '~/composables/useJustifiedLayout'
+import type { GalleryImage, JustifiedItem, JustifiedRow } from '~/models/types/gallery'
+import { GalleryWidowAlign } from '~/models/enums/gallery'
 
-const img = (id: string, w: number, h: number): GalleryImage => ({
+const img = (id: string, width: number, height: number): GalleryImage => ({
     id,
     src: `/${id}.jpg`,
     alt: id,
-    width: w,
-    height: h,
+    width,
+    height,
 })
 
 describe('useJustifiedLayout', () => {
@@ -47,7 +50,7 @@ describe('useJustifiedLayout', () => {
         expect(layout.value.rows.length).toBeGreaterThan(0)
         // Each row's total width should be approximately the container width
         // (full rows are scaled to fit exactly).
-        layout.value.rows.forEach((row) => {
+        layout.value.rows.forEach((row: JustifiedRow) => {
             if (!row.isWidow) {
                 expect(Math.round(row.width)).toBeLessThanOrEqual(900)
                 expect(row.width).toBeGreaterThan(800)
@@ -98,8 +101,8 @@ describe('useJustifiedLayout', () => {
             widowAlign: ref(GalleryWidowAlign.LEFT),
         })
 
-        const totalImagesShown = shown.value.rows.reduce((s, r) => s + r.items.length, 0)
-        const totalImagesHidden = hidden.value.rows.reduce((s, r) => s + r.items.length, 0)
+        const totalImagesShown = shown.value.rows.reduce((sum: number, row: JustifiedRow) => sum + row.items.length, 0)
+        const totalImagesHidden = hidden.value.rows.reduce((sum: number, row: JustifiedRow) => sum + row.items.length, 0)
 
         expect(totalImagesHidden).toBeLessThanOrEqual(totalImagesShown)
     })
@@ -120,7 +123,7 @@ describe('useJustifiedLayout', () => {
             gap: ref(8),
             widowAlign: ref(GalleryWidowAlign.JUSTIFY),
         })
-        const orderedIds = layout.value.items.map((i) => i.image.id)
+        const orderedIds = layout.value.items.map((item: JustifiedItem) => item.image.id)
         expect(orderedIds).toEqual(['a', 'b', 'c', 'd', 'e', 'f'])
     })
 

@@ -36,17 +36,17 @@ const fetchIssues = async (statuses: string, page = 1): Promise<IssuesResponse> 
         p: String(page),
     })
 
-    const res = await fetch(`${BASE_URL}/issues/search?${params}`, {
+    const response = await fetch(`${BASE_URL}/issues/search?${params}`, {
         headers: { Authorization: `Bearer ${token}` },
     })
 
-    if (!res.ok) {
-        console.error(`❌ SonarQube API error: ${res.status} ${res.statusText}`)
+    if (!response.ok) {
+        console.error(`❌ SonarQube API error: ${response.status} ${response.statusText}`)
         process.exitCode = 1
         return { total: 0, issues: [] }
     }
 
-    return res.json() as Promise<IssuesResponse>
+    return response.json() as Promise<IssuesResponse>
 }
 
 const severityIcon = (severity: string): string => {
@@ -77,18 +77,18 @@ const fetchLastAnalysis = async (): Promise<string | null> => {
         ps: '1',
     })
 
-    const res = await fetch(`${BASE_URL}/project_analyses/search?${params}`, {
+    const response = await fetch(`${BASE_URL}/project_analyses/search?${params}`, {
         headers: { Authorization: `Bearer ${token}` },
     })
 
-    if (!res.ok) return null
+    if (!response.ok) return null
 
-    const data = (await res.json()) as { analyses: { date: string }[] }
+    const data = (await response.json()) as { analyses: { date: string }[] }
     return data.analyses?.[0]?.date || null
 }
 
-const formatTimeSince = (dateStr: string): string => {
-    const diff = Date.now() - new Date(dateStr).getTime()
+const formatTimeSince = (dateString: string): string => {
+    const diff = Date.now() - new Date(dateString).getTime()
     const minutes = Math.floor(diff / 60000)
     if (minutes < 60) return `${minutes} minute(s) ago`
     const hours = Math.floor(minutes / 60)
@@ -126,12 +126,12 @@ const checkSonar = async () => {
 
     for (const issue of openIssues.issues) {
         counts[issue.severity] = (counts[issue.severity] || 0) + 1
-        const loc = issue.line ? `:${issue.line}` : ''
+        const location = issue.line ? `:${issue.line}` : ''
         const icon = severityIcon(issue.severity)
         const component = sanitize(stripPrefix(issue.component))
         const severity = sanitize(issue.severity)
         const message = sanitize(issue.message)
-        console.log(`  ${icon} [${severity}] ${component}${loc}`)
+        console.log(`  ${icon} [${severity}] ${component}${location}`)
         console.log(`    ${message}\n`)
     }
 

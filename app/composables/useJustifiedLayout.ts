@@ -8,11 +8,11 @@ type Options = {
 
 export const useJustifiedLayout = ({ images, containerWidth, targetRowHeight, gap, widowAlign }: Options) => {
     const layout = computed<JustifiedLayout>(() => {
-        const cw = containerWidth.value
-        const target = targetRowHeight.value
-        const g = gap.value
+        const currentWidth = containerWidth.value
+        const targetHeight = targetRowHeight.value
+        const gapSize = gap.value
 
-        if (!cw || !target || !images.value.length) {
+        if (!currentWidth || !targetHeight || !images.value.length) {
             return { rows: [], items: [], totalHeight: 0 }
         }
 
@@ -22,65 +22,66 @@ export const useJustifiedLayout = ({ images, containerWidth, targetRowHeight, ga
         const flush = (isLastRow: boolean) => {
             if (!buffer.length) return
 
-            const aspectSum = buffer.reduce((s, b) => s + b.aspect, 0)
-            const gapsWidth = g * Math.max(0, buffer.length - 1)
+            const aspectSum = buffer.reduce((sum, entry) => sum + entry.aspect, 0)
+            const gapsWidth = gapSize * Math.max(0, buffer.length - 1)
 
             let rowHeight: number
             if (isLastRow) {
-                const naturalWidth = aspectSum * target + gapsWidth
-                rowHeight = naturalWidth > cw ? (cw - gapsWidth) / aspectSum : target
+                const naturalWidth = aspectSum * targetHeight + gapsWidth
+                rowHeight = naturalWidth > currentWidth ? (currentWidth - gapsWidth) / aspectSum : targetHeight
             } else {
-                rowHeight = (cw - gapsWidth) / aspectSum
+                rowHeight = (currentWidth - gapsWidth) / aspectSum
             }
 
-            const items: JustifiedItem[] = buffer.map((b) => ({
-                image: b.image,
-                width: b.aspect * rowHeight,
+            const items: JustifiedItem[] = buffer.map((entry) => ({
+                image: entry.image,
+                width: entry.aspect * rowHeight,
                 height: rowHeight,
                 rowIndex: rows.length,
                 isLastRow,
             }))
 
-            const rowWidth = items.reduce((s, i) => s + i.width, 0) + gapsWidth
+            const rowWidth = items.reduce((sum, item) => sum + item.width, 0) + gapsWidth
 
             rows.push({
                 height: rowHeight,
                 width: rowWidth,
                 items,
-                isWidow: isLastRow && rowWidth < cw - 1,
+                isWidow: isLastRow && rowWidth < currentWidth - 1,
                 align: widowAlign.value,
             })
 
             buffer = []
         }
 
-        for (const img of images.value) {
-            if (!img?.width || !img.height) continue
+        for (const image of images.value) {
+            if (!image?.width || !image.height) continue
 
-            const aspect = img.width / img.height
-            const itemWidth = aspect * target
-            const currentWidth = buffer.reduce((s, b) => s + b.aspect * target, 0) + g * Math.max(0, buffer.length - 1)
-            const projected = currentWidth + (buffer.length ? g : 0) + itemWidth
+            const aspect = image.width / image.height
+            const itemWidth = aspect * targetHeight
+            const currentRowWidth =
+                buffer.reduce((sum, entry) => sum + entry.aspect * targetHeight, 0) + gapSize * Math.max(0, buffer.length - 1)
+            const projectedWidth = currentRowWidth + (buffer.length ? gapSize : 0) + itemWidth
 
-            if (buffer.length && projected > cw) {
+            if (buffer.length && projectedWidth > currentWidth) {
                 flush(false)
             }
-            buffer.push({ image: img, aspect })
+            buffer.push({ image, aspect })
         }
 
         flush(true)
 
         if (rows.length) {
-            const last = rows.at(-1)
-            if (last && widowAlign.value === GalleryWidowAlign.HIDE_IF_SINGLE && last.items.length === 1 && last.isWidow) {
+            const lastRow = rows.at(-1)
+            if (lastRow && widowAlign.value === GalleryWidowAlign.HIDE_IF_SINGLE && lastRow.items.length === 1 && lastRow.isWidow) {
                 rows.pop()
-            } else if (last) {
-                last.items.forEach((it) => (it.isLastRow = true))
+            } else if (lastRow) {
+                lastRow.items.forEach((item) => (item.isLastRow = true))
             }
         }
 
-        const flatItems = rows.flatMap((r) => r.items)
-        const totalHeight = rows.reduce((s, r) => s + r.height, 0) + Math.max(0, rows.length - 1) * g
+        const flatItems = rows.flatMap((row) => row.items)
+        const totalHeight = rows.reduce((sum, row) => sum + row.height, 0) + Math.max(0, rows.length - 1) * gapSize
 
         return { rows, items: flatItems, totalHeight }
     })

@@ -70,9 +70,9 @@ const emit = defineEmits<{
 
 // Computed
 const buttons = computed(() =>
-    props.options.map((o) => ({
-        value: o.value,
-        text: o.text,
+    props.options.map((option) => ({
+        value: option.value,
+        text: option.text,
     })),
 )
 

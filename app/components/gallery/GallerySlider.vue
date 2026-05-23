@@ -198,8 +198,8 @@ const currentIndex = ref(props.modelValue)
 // Watchers
 watch(
     () => props.modelValue,
-    (v) => {
-        currentIndex.value = v
+    (index) => {
+        currentIndex.value = index
     },
 )
 
@@ -207,14 +207,14 @@ watch(
 const current = computed(() => props.images[currentIndex.value])
 
 // Methods
-const setIndex = (i: number) => {
-    const len = props.images.length
-    if (!len) return
-    const next = props.loop ? ((i % len) + len) % len : Math.max(0, Math.min(len - 1, i))
-    if (next === currentIndex.value) return
-    currentIndex.value = next
-    emit('update:modelValue', next)
-    emit('change', next)
+const setIndex = (position: number) => {
+    const length = props.images.length
+    if (!length) return
+    const normalizedIndex = props.loop ? ((position % length) + length) % length : Math.max(0, Math.min(length - 1, position))
+    if (normalizedIndex === currentIndex.value) return
+    currentIndex.value = normalizedIndex
+    emit('update:modelValue', normalizedIndex)
+    emit('change', normalizedIndex)
 }
 
 const next = () => setIndex(currentIndex.value + 1)
@@ -225,13 +225,13 @@ onMounted(() => {
     if (props.autofocus) rootEl.value?.focus()
 })
 
-useEventListener(rootEl, 'keydown', (e: KeyboardEvent) => {
-    if (e.key === 'ArrowLeft') {
-        e.preventDefault()
+useEventListener(rootEl, 'keydown', (event: KeyboardEvent) => {
+    if (event.key === 'ArrowLeft') {
+        event.preventDefault()
         prev()
     }
-    if (e.key === 'ArrowRight') {
-        e.preventDefault()
+    if (event.key === 'ArrowRight') {
+        event.preventDefault()
         next()
     }
 })

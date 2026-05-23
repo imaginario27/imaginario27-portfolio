@@ -16,7 +16,7 @@ imaginario27-portfolio/
 │   │   ├── hero-animations/              # three.js / canvas scenes (e.g. InfiniteLandscape.vue)
 │   │   ├── layout/                       # Site chrome (WebHeader.vue, hero/HomeHero.vue)
 │   │   └── toggles/                      # ThemeToggle.vue
-│   ├── composables/use*.ts               # App-only composables (useWPSeo)
+│   ├── composables/use*.ts               # App-only composables (useGraphQL, useWPSeo, usePortfolioData)
 │   ├── extend/queries/                   # GraphQL fragments / query extensions
 │   ├── layouts/default.vue               # Single layout at present
 │   ├── middleware/                       # Route middleware (currently empty)
@@ -83,7 +83,9 @@ WordPress (https://imaginario27.com/graphql)
           │
           │ nuxt-graphql-client (GQL_HOST runtimeConfig.public)
           ▼
-app/queries/*.gql  ──►  useAsyncGql({ operation, variables })
+app/queries/*.gql  ──►  app/composables/useGraphQL.ts (wrapper)
+                           ├─ useAsyncQuery()   ← reactive / SSR queries (pages, components)
+                           └─ executeQuery()    ← imperative queries (composables, functions)
                                 │
                                 ▼
                   pages / components render DS components

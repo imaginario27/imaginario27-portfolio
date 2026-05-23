@@ -1,17 +1,33 @@
 name: CI
 
 on:
+    push:
+        branches: [main]
     pull_request:
         branches: [main]
+        types: [opened, synchronize, ready_for_review]
 
 concurrency:
     group: ci-${{ github.head_ref }}
     cancel-in-progress: true
 
 jobs:
+    dscheck:
+        name: Design System Version Check
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+                  cache: npm
+            - run: npm ci
+            - run: npm run air-ui:check -- --strict
+
     format:
         name: Format Check
         runs-on: ubuntu-latest
+        needs: dscheck
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4

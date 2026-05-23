@@ -47,11 +47,11 @@ const main = (): void => {
         }
 
         const sorted = Object.keys(locale)
-            .sort((a, b) => a.localeCompare(b))
+            .sort((first, second) => first.localeCompare(second))
             .reduce(
-                (acc, k) => {
-                    acc[k] = locale[k]
-                    return acc
+                (result, key) => {
+                    result[key] = locale[key]
+                    return result
                 },
                 {} as Record<string, string>,
             )

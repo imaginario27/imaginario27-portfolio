@@ -24,12 +24,13 @@ interface Replacement {
 // ----------------------------------------------------
 // HELPERS
 // ----------------------------------------------------
-const rl = readline.createInterface({
+const readlineInterface = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
 })
 
-const ask = (question: string): Promise<string> => new Promise((resolve) => rl.question(question, (answer) => resolve(answer.trim())))
+const ask = (question: string): Promise<string> =>
+    new Promise((resolve) => readlineInterface.question(question, (answer) => resolve(answer.trim())))
 
 const readFile = (filePath: string): string => fs.readFileSync(filePath, 'utf8')
 
@@ -111,7 +112,7 @@ const run = async (): Promise<void> => {
         })
     }
 
-    rl.close()
+    readlineInterface.close()
 
     if (replacements.length === 0) {
         console.log('\nℹ️  No changes applied')

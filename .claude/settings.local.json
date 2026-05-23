@@ -4,20 +4,41 @@
         "BASH_MAX_OUTPUT_LENGTH": "150000"
     },
     "permissions": {
-        "allow": ["mcp__claude_ai_AirUI__search_docs", "mcp__claude_ai_AirUI__get_doc_page", "Bash(npx vue-tsc *)", "Bash(npm run *)"]
+        "allow": ["mcp__claude_ai_AirUI__search_docs", "mcp__claude_ai_AirUI__get_doc_page", "Bash(npx vue-tsc *)", "Bash(npm run *)"],
+        "deny": [
+            "Read(./node_modules/**)",
+            "Read(./dist/**)",
+            "Read(./.nuxt/**)",
+            "Read(./.git/**)",
+            "Read(./.vscode/**)",
+            "Read(./.idea/**)",
+            "Read(./.DS_Store)",
+            "Read(./*.log)",
+            "Read(./*.lock)",
+            "Read(./.env)",
+            "Read(.env)",
+            "Edit(./.env)",
+            "Edit(.env)",
+            "Write(./.env)",
+            "Write(.env)",
+            "Bash(cat .env)",
+            "Bash(cat ./.env)",
+            "Bash(* .env*)",
+            "Bash(* ./.env)"
+        ]
     },
     "model": "claude-opus-4-6",
-    "deny": [
-        "Read(./node_modules/**)",
-        "Read(./dist/**)",
-        "Read(./.nuxt/**)",
-        "Read(./.claude/**)",
-        "Read(./.git/**)",
-        "Read(./.vscode/**)",
-        "Read(./.idea/**)",
-        "Read(./.DS_Store)",
-        "Read(./*.log)",
-        "Read(./*.lock)",
-        "Read(./*.env)"
-    ]
+    "hooks": {
+        "PreToolUse": [
+            {
+                "matcher": "Read|Edit|Write|Bash|Glob|Grep",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "node .claude/hooks/block-env.cjs"
+                    }
+                ]
+            }
+        ]
+    }
 }

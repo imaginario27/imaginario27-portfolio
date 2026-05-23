@@ -2,18 +2,18 @@ const TAXONOMY_KEYS = ['projectCategories', 'projectTags', 'tecnologias', 'forma
 
 const stripHtml = (html: string | null | undefined) => {
     if (!html) return ''
-    const doc = new DOMParser().parseFromString(html, 'text/html')
-    return (doc.body.textContent ?? '').trim()
+    const parsed = new DOMParser().parseFromString(html, 'text/html')
+    return (parsed.body.textContent ?? '').trim()
 }
 
-const toGalleryImage = (p: PortfolioItem, taxonomyKey: string): GalleryImage => ({
-    ...p.featuredImage,
-    tags: (p.taxonomies[taxonomyKey] ?? []).map((t) => t.slug),
+const toGalleryImage = (portfolioItem: PortfolioItem, taxonomyKey: string): GalleryImage => ({
+    ...portfolioItem.featuredImage,
+    tags: (portfolioItem.taxonomies[taxonomyKey] ?? []).map((term) => term.slug),
 })
 
 const mapNodeToPortfolioItem = (node: ProjectNode): PortfolioItem | null => {
-    const img = node.featuredImage?.node
-    if (!img?.sourceUrl || !img.mediaDetails?.width || !img.mediaDetails?.height) {
+    const image = node.featuredImage?.node
+    if (!image?.sourceUrl || !image.mediaDetails?.width || !image.mediaDetails?.height) {
         return null
     }
 
@@ -23,8 +23,8 @@ const mapNodeToPortfolioItem = (node: ProjectNode): PortfolioItem | null => {
     for (const key of TAXONOMY_KEYS) {
         const raw = node[key]?.nodes ?? []
         taxonomies[key] = raw
-            .filter((t): t is { slug: string; name: string } => Boolean(t.slug && t.name))
-            .map((t) => ({ slug: t.slug, name: t.name }))
+            .filter((term): term is { slug: string; name: string } => Boolean(term.slug && term.name))
+            .map((term) => ({ slug: term.slug, name: term.name }))
     }
 
     return {
@@ -35,10 +35,10 @@ const mapNodeToPortfolioItem = (node: ProjectNode): PortfolioItem | null => {
         excerpt: stripHtml(node.excerpt) || null,
         featuredImage: {
             id,
-            src: img.sourceUrl,
-            alt: img.altText ?? node.title ?? '',
-            width: img.mediaDetails.width,
-            height: img.mediaDetails.height,
+            src: image.sourceUrl,
+            alt: image.altText ?? node.title ?? '',
+            width: image.mediaDetails.width,
+            height: image.mediaDetails.height,
         },
         taxonomies,
     }
@@ -55,7 +55,7 @@ export const usePortfolioData = () => {
     const fetchProjects = async (variables?: { first?: number; language?: string }) => {
         pending.value = true
         try {
-            const { data } = await useAsyncGql({
+            const { data } = await useAsyncQuery({
                 operation: 'ProjectsList',
                 variables: {
                     first: variables?.first ?? 100,
@@ -63,7 +63,7 @@ export const usePortfolioData = () => {
                 },
             })
             const nodes = (data.value?.projects?.nodes ?? []) as ProjectNode[]
-            items.value = nodes.map(mapNodeToPortfolioItem).filter((x): x is PortfolioItem => x !== null)
+            items.value = nodes.map(mapNodeToPortfolioItem).filter((item): item is PortfolioItem => item !== null)
         } finally {
             pending.value = false
         }
@@ -87,13 +87,13 @@ export const usePortfolioData = () => {
 
     const imagesWithTags = (taxonomyKey: string) => {
         return computed<GalleryImage[]>(() => {
-            return items.value.map((p) => toGalleryImage(p, taxonomyKey))
+            return items.value.map((portfolioItem) => toGalleryImage(portfolioItem, taxonomyKey))
         })
     }
 
     const itemsByImageId = computed(() => {
         const map = new Map<string, PortfolioItem>()
-        items.value.forEach((p) => map.set(p.featuredImage.id, p))
+        items.value.forEach((portfolioItem) => map.set(portfolioItem.featuredImage.id, portfolioItem))
         return map
     })
 

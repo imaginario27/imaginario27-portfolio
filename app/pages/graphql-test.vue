@@ -12,5 +12,5 @@
 </template>
 
 <script lang="ts" setup>
-const { data } = await useAsyncGql('Pages')
+const { data } = await useAsyncQuery('Pages')
 </script>
