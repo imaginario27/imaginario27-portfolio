@@ -111,12 +111,12 @@ const props = defineProps({
     fit: {
         type: String as PropType<'cover' | 'contain'>,
         default: 'cover',
-        validator: (v: string) => ['cover', 'contain'].includes(v),
+        validator: (value: string) => ['cover', 'contain'].includes(value),
     },
     captionPlacement: {
         type: String as PropType<GalleryCaptionPlacement>,
         default: GalleryCaptionPlacement.HOVER,
-        validator: (v: GalleryCaptionPlacement) => Object.values(GalleryCaptionPlacement).includes(v),
+        validator: (value: GalleryCaptionPlacement) => Object.values(GalleryCaptionPlacement).includes(value),
     },
     sizes: {
         type: String as PropType<string>,

@@ -12,20 +12,20 @@ const isStrict = process.argv.includes('--strict')
 console.log('\nAir UI Dependency Check')
 console.log('--------------------------------------------------')
 
-const getInstalledVersion = (pkg: string): string | null => {
+const getInstalledVersion = (packageName: string): string | null => {
     try {
-        const pkgPath = require.resolve(`${pkg}/package.json`)
-        const pkgJson = JSON.parse(readFileSync(pkgPath, 'utf-8'))
+        const packagePath = require.resolve(`${packageName}/package.json`)
+        const packageJson = JSON.parse(readFileSync(packagePath, 'utf-8'))
 
-        return pkgJson.version
+        return packageJson.version
     } catch {
         return null
     }
 }
 
-const getLatestVersion = async (pkg: string): Promise<string | null> => {
+const getLatestVersion = async (packageName: string): Promise<string | null> => {
     try {
-        const { stdout } = await execAsync(`npm view ${pkg} version`, { timeout: 5000 })
+        const { stdout } = await execAsync(`npm view ${packageName} version`, { timeout: 5000 })
         return stdout.trim()
     } catch {
         return null
@@ -33,30 +33,30 @@ const getLatestVersion = async (pkg: string): Promise<string | null> => {
 }
 
 const run = async (): Promise<void> => {
-    const latestVersions = await Promise.all(packages.map((pkg) => getLatestVersion(pkg)))
+    const latestVersions = await Promise.all(packages.map((packageName) => getLatestVersion(packageName)))
 
     let hasOutdated = false
 
-    packages.forEach((pkg, index) => {
-        const installed = getInstalledVersion(pkg)
+    packages.forEach((packageName, index) => {
+        const installed = getInstalledVersion(packageName)
         const latest = latestVersions[index]
 
         if (!installed) {
-            console.warn(`⚠️ ${pkg} is not installed\n`)
+            console.warn(`⚠️ ${packageName} is not installed\n`)
             return
         }
 
         if (!latest) {
-            console.warn(`⚠️ Could not fetch latest version for ${pkg}\n`)
+            console.warn(`⚠️ Could not fetch latest version for ${packageName}\n`)
             return
         }
 
         if (installed === latest) {
-            console.log(`✅ ${pkg} is up to date (${installed})`)
+            console.log(`✅ ${packageName} is up to date (${installed})`)
         } else {
             hasOutdated = true
 
-            console.warn(`⚠️ ${pkg} is outdated\n` + `   Installed: ${installed}\n` + `   Latest:    ${latest}\n`)
+            console.warn(`⚠️ ${packageName} is outdated\n` + `   Installed: ${installed}\n` + `   Latest:    ${latest}\n`)
         }
     })
 

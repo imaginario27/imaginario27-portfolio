@@ -1,7 +1,7 @@
 # Guardrails
 
 1. ALWAYS use `<script setup lang="ts">` with runtime `defineProps({ key: { type: … as PropType<T>, default, validator } })`. NEVER use the generic `defineProps<Interface>()` form.
-2. ALWAYS type enum-like props with an enum — prefer a DS enum (auto-imported from the `@imaginario27/air-ui-ds` layer, e.g. `SelectType`, `ButtonSize`, `ButtonStyleType`) and fall back to an app-local enum in [app/models/enums/](app/models/enums/). Validate with `validator: (v) => Object.values(Enum).includes(v)`.
+2. ALWAYS type enum-like props with an enum — prefer a DS enum (auto-imported from the `@imaginario27/air-ui-ds` layer, e.g. `SelectType`, `ButtonSize`, `ButtonStyleType`) and fall back to an app-local enum in [app/models/enums/](app/models/enums/). Validate with `validator: (value) => Object.values(Enum).includes(value)`.
    2a. ALWAYS bind the enum member when consuming a DS prop: `<ActionButton :size="ButtonSize.MD" :styleType="ButtonStyleType.PRIMARY_BRAND_FILLED" />`, never `size="md"` / `styleType="primary-brand-filled"`. Applies across `app/components/**`, `app/pages/**`, and `app/layouts/**`.
 3. NEVER use the Options API, `defineComponent({ data() … })`, or `.tsx` components. This repo is `<script setup>` only.
 4. NEVER add a `<style>` or `<style scoped>` block. Styling is Tailwind utility-first via `:class="[ … ]"` arrays.
@@ -53,7 +53,7 @@
 
 ## Naming
 
-24. NEVER use single-letter or abbreviated variable/parameter names (`p`, `cb`, `val`, `arr`, `el`, `idx`, `img`, `btn`, `opts`, `cfg`). Every identifier must be a full, readable word: `project`, `callback`, `value`, `items`, `element`, `index`, `image`, `button`, `options`, `config`. The only exceptions are: (a) trivial arrow callbacks in `.map`, `.filter`, `.reduce` where the collection name already provides context (e.g. `items.map((item) => …)`), and (b) conventional loop counters `i`, `j` in rare imperative loops. When in doubt, spell it out.
+24. NEVER use single-letter or abbreviated variable/parameter names (`p`, `cb`, `val`, `arr`, `el`, `idx`, `img`, `btn`, `opts`, `cfg`, `s`, `b`, `r`, `cw`, `g`). Every identifier must be a full, readable word: `project`, `callback`, `value`, `items`, `element`, `index`, `image`, `button`, `options`, `config`. This applies everywhere — including `.map`, `.filter`, `.reduce`, and `.forEach` callbacks (e.g. `rows.reduce((sum, row) => sum + row.height, 0)`, not `rows.reduce((s, r) => s + r.height, 0)`). The only exception is conventional loop counters `i`, `j` in rare imperative loops. When in doubt, spell it out.
 
 ## Reuse
 

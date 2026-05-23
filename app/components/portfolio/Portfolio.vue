@@ -133,7 +133,7 @@ const props = defineProps({
     layout: {
         type: String as PropType<GalleryLayout>,
         default: GalleryLayout.GRID,
-        validator: (v: GalleryLayout) => Object.values(GalleryLayout).includes(v),
+        validator: (value: GalleryLayout) => Object.values(GalleryLayout).includes(value),
     },
     columnsSm: { type: Number as PropType<number>, default: 1 },
     columnsMd: { type: Number as PropType<number>, default: 2 },
@@ -149,7 +149,7 @@ const props = defineProps({
     widowAlign: {
         type: String as PropType<GalleryWidowAlign>,
         default: GalleryWidowAlign.JUSTIFY,
-        validator: (v: GalleryWidowAlign) => Object.values(GalleryWidowAlign).includes(v),
+        validator: (value: GalleryWidowAlign) => Object.values(GalleryWidowAlign).includes(value),
     },
     captionPlacement: {
         type: String as PropType<GalleryCaptionPlacement>,
@@ -244,9 +244,9 @@ const { pending, setItems, fetchProjects, buildFilterOptions, imagesWithTags, it
 
 watch(
     () => props.items,
-    (val) => {
-        if (val) {
-            setItems(val)
+    (preloadedItems) => {
+        if (preloadedItems) {
+            setItems(preloadedItems)
         } else {
             fetchProjects()
         }

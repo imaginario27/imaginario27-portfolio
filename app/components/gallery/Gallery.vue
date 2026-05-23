@@ -149,7 +149,7 @@ const props = defineProps({
     layout: {
         type: String as PropType<GalleryLayout>,
         default: GalleryLayout.GRID,
-        validator: (v: GalleryLayout) => Object.values(GalleryLayout).includes(v),
+        validator: (value: GalleryLayout) => Object.values(GalleryLayout).includes(value),
     },
     columnsSm: { type: Number as PropType<number>, default: 2 },
     columnsMd: { type: Number as PropType<number>, default: 3 },
@@ -165,7 +165,7 @@ const props = defineProps({
     widowAlign: {
         type: String as PropType<GalleryWidowAlign>,
         default: GalleryWidowAlign.JUSTIFY,
-        validator: (v: GalleryWidowAlign) => Object.values(GalleryWidowAlign).includes(v),
+        validator: (value: GalleryWidowAlign) => Object.values(GalleryWidowAlign).includes(value),
     },
     captionPlacement: {
         type: String as PropType<GalleryCaptionPlacement>,
@@ -283,20 +283,22 @@ const fetchMedia = async () => {
 
         // Preserve the order of mediaIds
         const byId = new Map<string, GalleryImage>()
-        nodes.forEach((n) => {
-            const key = String(n.databaseId ?? n.id)
+        nodes.forEach((node) => {
+            const key = String(node.databaseId ?? node.id)
             byId.set(key, {
                 id: key,
-                src: n.sourceUrl ?? '',
-                alt: n.altText ?? n.title ?? '',
-                caption: stripHtml(n.caption ?? null) || null,
-                width: n.mediaDetails?.width ?? 0,
-                height: n.mediaDetails?.height ?? 0,
+                src: node.sourceUrl ?? '',
+                alt: node.altText ?? node.title ?? '',
+                caption: stripHtml(node.caption ?? null) || null,
+                width: node.mediaDetails?.width ?? 0,
+                height: node.mediaDetails?.height ?? 0,
                 tags: props.itemTags[key],
             })
         })
 
-        fetchedImages.value = ids.map((id) => byId.get(id)).filter((x): x is GalleryImage => Boolean(x && x.src && x.width && x.height))
+        fetchedImages.value = ids
+            .map((id) => byId.get(id))
+            .filter((image): image is GalleryImage => Boolean(image && image.src && image.width && image.height))
     } finally {
         pending.value = false
     }
@@ -304,8 +306,8 @@ const fetchMedia = async () => {
 
 const stripHtml = (html: string | null) => {
     if (!html) return ''
-    const doc = new DOMParser().parseFromString(html, 'text/html')
-    return (doc.body.textContent ?? '').trim()
+    const parsed = new DOMParser().parseFromString(html, 'text/html')
+    return (parsed.body.textContent ?? '').trim()
 }
 
 watch(
@@ -356,8 +358,8 @@ const lightboxOpen = ref(false)
 const lightboxIndex = ref(0)
 
 const onItemClick = (image: GalleryImage) => {
-    const idx = visibleImages.value.findIndex((i) => i.id === image.id)
-    const safeIdx = Math.max(0, idx)
+    const foundIndex = visibleImages.value.findIndex((item) => item.id === image.id)
+    const safeIdx = Math.max(0, foundIndex)
     emit('select', image, safeIdx)
     if (props.enableLightbox) {
         lightboxIndex.value = safeIdx

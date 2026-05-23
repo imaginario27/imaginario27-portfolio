@@ -62,13 +62,13 @@ definePageMeta({
     title: 'Gallery demo',
 })
 
-const sample = (id: string, w: number, h: number, tags: string[], caption: string) => ({
+const sample = (id: string, width: number, height: number, tags: string[], caption: string) => ({
     id,
-    src: `https://picsum.photos/seed/${id}/${w}/${h}`,
+    src: `https://picsum.photos/seed/${id}/${width}/${height}`,
     alt: caption,
     caption,
-    width: w,
-    height: h,
+    width,
+    height,
     tags,
 })
 

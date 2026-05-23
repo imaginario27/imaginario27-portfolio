@@ -136,7 +136,7 @@ const props = defineProps({
     captionPlacement: {
         type: String as PropType<GalleryCaptionPlacement>,
         default: GalleryCaptionPlacement.HOVER,
-        validator: (v: GalleryCaptionPlacement) => Object.values(GalleryCaptionPlacement).includes(v),
+        validator: (value: GalleryCaptionPlacement) => Object.values(GalleryCaptionPlacement).includes(value),
     },
     sizes: {
         type: String as PropType<string>,

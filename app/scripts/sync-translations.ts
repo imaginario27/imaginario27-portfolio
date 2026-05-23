@@ -34,14 +34,14 @@ const getAllFiles = (dir: string, extensions: string[]): string[] => {
     return results
 }
 
-const flattenObject = (obj: Record<string, any>, prefix = ''): Record<string, string> => {
+const flattenObject = (source: Record<string, any>, prefix = ''): Record<string, string> => {
     const result: Record<string, string> = {}
-    for (const key of Object.keys(obj)) {
+    for (const key of Object.keys(source)) {
         const fullKey = prefix ? `${prefix}.${key}` : key
-        if (typeof obj[key] === 'object' && obj[key] !== null) {
-            Object.assign(result, flattenObject(obj[key], fullKey))
+        if (typeof source[key] === 'object' && source[key] !== null) {
+            Object.assign(result, flattenObject(source[key], fullKey))
         } else {
-            result[fullKey] = String(obj[key])
+            result[fullKey] = String(source[key])
         }
     }
     return result
@@ -93,8 +93,8 @@ const buildNestedKeyMap = (mainLocale: Record<string, string>): Record<string, s
     return map
 }
 
-const escapeRegex = (str: string): string => {
-    return str.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
+const escapeRegex = (input: string): string => {
+    return input.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
 }
 
 const getSourceFiles = (): string[] => {
@@ -153,7 +153,7 @@ const collectKeysFromSource = (): string[] => {
     }
 
     console.log(`  Found ${allKeys.size} unique translation keys across ${files.length} files.\n`)
-    return [...allKeys].sort((a, b) => a.localeCompare(b))
+    return [...allKeys].sort((first, second) => first.localeCompare(second))
 }
 
 const resolveTranslation = (key: string, existing: Record<string, string>, mainLocale: Record<string, string>, lang: string): string => {
@@ -186,7 +186,7 @@ const buildLanguageFile = (
 }
 
 const writeMissingReport = (missing: Record<string, Record<string, string>>, languages: string[]): void => {
-    const hasMissing = languages.some((l) => Object.keys(missing[l]).length > 0)
+    const hasMissing = languages.some((language) => Object.keys(missing[language]).length > 0)
     if (!hasMissing) {
         console.log('\n  ✓ All translations are complete!')
         return
@@ -222,7 +222,7 @@ const main = (): void => {
     }
 
     const missing: Record<string, Record<string, string>> = {}
-    const otherLanguages = config.languages.filter((l) => l !== config.mainLanguage)
+    const otherLanguages = config.languages.filter((language) => language !== config.mainLanguage)
 
     for (const lang of otherLanguages) {
         const { langOutput, missingKeys } = buildLanguageFile(lang, sortedKeys, mainLocale)
