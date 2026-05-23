@@ -9,7 +9,6 @@
             "Read(./node_modules/**)",
             "Read(./dist/**)",
             "Read(./.nuxt/**)",
-            "Read(./.claude/**)",
             "Read(./.git/**)",
             "Read(./.vscode/**)",
             "Read(./.idea/**)",
