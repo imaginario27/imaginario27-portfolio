@@ -67,7 +67,7 @@ const { isDark } = storeToRefs(themeStore)
 const { isMobile } = useIsMobile()
 
 // Translation dependencies
-const { locale } = useI18n()
+const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const menuLanguage = computed(() => currentLanguage.value || locale.value || 'en')
 
@@ -84,7 +84,7 @@ const { data: menu } = await useAsyncQuery({
 })
 
 // Computed
-const menuItems = computed<MenuItem[]>(() => {
+const wordpressMenuItems = computed<MenuItem[]>(() => {
     const nodes: MenuNode[] = menu.value?.menuItems?.nodes ?? []
 
     return nodes
@@ -103,5 +103,15 @@ const menuItems = computed<MenuItem[]>(() => {
                 children: children.length ? children : undefined,
             }
         })
+})
+
+const menuItems = computed<MenuItem[]>(() => {
+    const items = [...wordpressMenuItems.value]
+
+    if (items.length >= 3) {
+        items[2] = { text: t('Sobre mí'), to: localePath('/about') }
+    }
+
+    return items
 })
 </script>
