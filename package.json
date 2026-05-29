@@ -26,9 +26,10 @@
         "preflight-check": "npm run air-ui:check -- --strict && npm run format:check && npm run translations:check && npm run test"
     },
     "dependencies": {
-        "@imaginario27/air-ui-ds": "1.13.3",
+        "@imaginario27/air-ui-ds": "1.13.4",
         "@imaginario27/air-ui-utils": "1.2.4",
         "@nuxt/content": "3.14.0",
+        "@nuxt/fonts": "0.14.0",
         "@nuxt/image": "2.0.0",
         "@nuxtjs/i18n": "10.4.0",
         "@pinia/nuxt": "0.11.3",
@@ -49,6 +50,7 @@
     "devDependencies": {
         "@nuxt/test-utils": "4.0.3",
         "@sonar/scan": "4.3.6",
+        "@types/three": "0.184.1",
         "@vitest/coverage-v8": "4.1.7",
         "@vue/test-utils": "2.4.10",
         "eslint": "10.4.0",

@@ -11,7 +11,16 @@ export default defineNuxtConfig({
         },
     },
 
-    modules: ['@pinia/nuxt', '@vueuse/nuxt', '@nuxt/content', '@nuxtjs/i18n', '@nuxt/image', 'nuxt-graphql-client', '@vueuse/motion/nuxt'],
+    modules: [
+        '@pinia/nuxt',
+        '@vueuse/nuxt',
+        '@nuxt/content',
+        '@nuxtjs/i18n',
+        '@nuxt/image',
+        'nuxt-graphql-client',
+        '@vueuse/motion/nuxt',
+        '@nuxt/fonts',
+    ],
 
     imports: {
         dirs: ['models/**'],
@@ -54,23 +63,11 @@ export default defineNuxtConfig({
         vueI18n: 'i18n.config.ts',
     },
 
-    css: ['~/assets/css/main.css'],
+    css: ['~/assets/css/main.css', '~/assets/css/defaults.css'],
 
     app: {
         head: {
             link: [
-                // Preconnect for fonts
-                { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-                {
-                    rel: 'preconnect',
-                    href: 'https://fonts.gstatic.com',
-                    crossorigin: 'anonymous',
-                },
-                {
-                    rel: 'stylesheet',
-                    href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap',
-                },
-
                 // Favicons
                 // Generate favicons: https://favicon.io/
                 {
@@ -129,5 +126,8 @@ export default defineNuxtConfig({
 
     vite: {
         plugins: [tailwindcss()],
+        optimizeDeps: {
+            include: ['vue3-toastify'],
+        },
     },
 })

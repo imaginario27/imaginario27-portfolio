@@ -11,6 +11,7 @@ Content is sourced from a headless WordPress instance via GraphQL. The UI consum
 - **Design system:** `@imaginario27/air-ui-ds` + `@imaginario27/air-ui-utils` (Nuxt layers)
 - **CMS:** WordPress + GraphQL (`nuxt-graphql-client`)
 - **i18n:** `@nuxtjs/i18n` — Spanish (default), English, German
+- **Fonts:** `@nuxt/fonts` — Inter (body), Sora (headings)
 - **State:** Pinia
 - **Testing:** Vitest + `@vue/test-utils` + `happy-dom`
 

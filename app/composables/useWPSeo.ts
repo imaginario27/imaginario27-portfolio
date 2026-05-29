@@ -1,11 +1,8 @@
-export const useWPSeo = (
-    seo: MaybeRefOrGetter<WPSeoData | null | undefined>,
-    fallbackTitle?: MaybeRefOrGetter<string | null | undefined>,
-) => {
+export const useWPSeo = (seo: MaybeRefOrGetter<WPSeoData | null | undefined>, t: (key: string, ...args: unknown[]) => string) => {
     const get = () => toValue(seo)
 
     useSeoMeta({
-        title: () => get()?.title ?? toValue(fallbackTitle) ?? undefined,
+        title: () => get()?.title ?? t('Imaginario27 - Portfolio de Imaginario27'),
         description: () => get()?.metaDesc ?? undefined,
 
         ogTitle: () => get()?.opengraphTitle ?? undefined,
