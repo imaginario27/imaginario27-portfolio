@@ -9,7 +9,7 @@
             <AppLogo
                 :src="isDark ? logoDark : logoLight"
                 :to="localePath('/')"
-                logoClass="min-w-[180px]!"
+                logoClass="w-[180px]!"
             />
         </template>
 
