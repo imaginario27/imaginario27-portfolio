@@ -37,8 +37,8 @@
                 :items="block.images ?? null"
                 :layout="GalleryLayout.GRID"
                 :columnsSm="1"
-                :columnsMd="2"
-                :columnsLg="3"
+                :columnsMd="Math.min(block.columns ?? 2, 2)"
+                :columnsLg="block.columns ?? 3"
                 :gap="8"
                 enableLightbox
             />

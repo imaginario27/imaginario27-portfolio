@@ -1,7 +1,7 @@
 <template>
     <div v-if="project">
         <Section
-            :spacing="SectionSpacing.XL"
+            :spacing="isMobile ? SectionSpacing.XL : SectionSpacing.LG"
             :hasSidePadding="true"
         >
             <SectionBody>
@@ -24,7 +24,7 @@
                         />
                     </div>
 
-                    <div :class="['flex', 'flex-col', 'items-center', 'gap-3', 'text-center']">
+                    <div :class="['flex', 'flex-col', 'items-center', 'gap-6', 'text-center']">
                         <span
                             v-if="formattedDate || project.client"
                             class="text-sm uppercase tracking-wider text-text-neutral-subtler"
@@ -34,7 +34,7 @@
                             </template>
                             <template v-if="formattedDate && project.client"> | </template>
                             <template v-if="project.client">
-                                <span class="text-text-primary-brand-default">
+                                <span class="text-text-primary-brand-default font-semibold">
                                     {{ project.client }}
                                 </span>
                             </template>
@@ -45,41 +45,33 @@
                             :align="Align.CENTER"
                             :size="HeadingSize.LG"
                             headingTag="h1"
+                            titleClass="leading-relaxed!"
+                            class="max-w-[920px]"
                         />
 
-                        <div
+                        <BadgeStack
                             v-if="categoriesAndTags.length"
-                            :class="['flex', 'flex-wrap', 'justify-center', 'gap-2']"
-                        >
-                            <Badge
-                                v-for="term in categoriesAndTags"
-                                :key="term.slug"
-                                :text="term.name"
-                                :color="ColorAccent.NEUTRAL"
-                                :shape="BadgeShape.PILL"
-                                :styleType="BadgeStyle.BORDER"
-                            />
-                        </div>
+                            :items="categoriesAndTags.map((term) => ({ text: term.name }))"
+                            :color="ColorAccent.NEUTRAL"
+                            :shape="BadgeShape.PILL"
+                            :styleType="BadgeStyle.BORDER"
+                            class="justify-center"
+                        />
 
-                        <div
+                        <BadgeStack
                             v-if="project.technologies.length"
-                            :class="['flex', 'flex-wrap', 'justify-center', 'gap-2']"
-                        >
-                            <Badge
-                                v-for="technology in project.technologies"
-                                :key="technology.slug"
-                                :text="technology.name"
-                                :color="ColorAccent.PRIMARY_BRAND"
-                                :shape="BadgeShape.PILL"
-                                :styleType="BadgeStyle.BORDER"
-                            />
-                        </div>
+                            :items="project.technologies.map((technology) => ({ text: technology.name }))"
+                            :color="ColorAccent.PRIMARY_BRAND"
+                            :shape="BadgeShape.PILL"
+                            :styleType="BadgeStyle.BORDER"
+                            class="justify-center"
+                        />
                     </div>
                 </MaxWidthContainer>
             </SectionBody>
         </Section>
 
-        <MaxWidthContainer class="mx-auto">
+        <MaxWidthContainer :class="['mx-auto', 'max-w-4xl!']">
             <Divider />
         </MaxWidthContainer>
 
@@ -89,7 +81,7 @@
             :hasSidePadding="true"
         >
             <SectionBody>
-                <MaxWidthContainer class="mx-auto">
+                <MaxWidthContainer :class="['mx-auto', 'max-w-4xl!', 'items-stretch!']">
                     <WPContent :content="project.content" />
                 </MaxWidthContainer>
             </SectionBody>
@@ -104,11 +96,17 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+    fullPageParallax: true,
+})
+
 const LOCALE_TO_SEGMENT: Record<string, string> = {
     es: 'proyectos',
     en: 'projects',
     de: 'projekte',
 }
+
+const { isMobile } = useIsMobile()
 
 const route = useRoute()
 const router = useRouter()

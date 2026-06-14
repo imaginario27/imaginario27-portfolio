@@ -69,6 +69,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+    fullPageParallax: true,
+})
+
 // Page type configuration
 const PAGE_CONFIGS: ProjectPageConfig[] = [
     {
