@@ -13,6 +13,19 @@
     --amber-900: #7a3306;
     --amber-950: #461901;
 
+    /* Blue */
+    --blue-50: #eef5ff;
+    --blue-100: #d9e8ff;
+    --blue-200: #bcd7ff;
+    --blue-300: #8ebeff;
+    --blue-400: #599aff;
+    --blue-500: #3375fc;
+    --blue-600: #1d55f1;
+    --blue-700: #1540de;
+    --blue-800: #1834b4;
+    --blue-900: #19308d;
+    --blue-950: #141f56;
+
     /* Coral red */
     --coral-red-100: #fee2e2;
     --coral-red-200: #fecaca;
@@ -78,18 +91,18 @@
     --prussian-blue-900: #094a71;
     --prussian-blue-950: #073657;
 
-    /* Purlple heart */
-    --purple-heart-100: #f6e6ff;
-    --purple-heart-200: #eed2ff;
-    --purple-heart-300: #e1aeff;
-    --purple-heart-400: #cf7bff;
-    --purple-heart-50: #fbf4ff;
-    --purple-heart-500: #bd49ff;
-    --purple-heart-600: #ad25f8;
-    --purple-heart-700: #9615db;
-    --purple-heart-800: #8017b5;
-    --purple-heart-900: #67148f;
-    --purple-heart-950: #48006b;
+    /* Turquoise */
+    --turquoise-50: #effefb;
+    --turquoise-100: #c8fff3;
+    --turquoise-200: #91fee8;
+    --turquoise-300: #52f5da;
+    --turquoise-400: #20e0c7;
+    --turquoise-500: #08c4ae;
+    --turquoise-600: #039e8f;
+    --turquoise-700: #077e74;
+    --turquoise-800: #0b645d;
+    --turquoise-900: #0e524d;
+    --turquoise-950: #013230;
 
     /* Wild blue yonder */
     --wild-blue-yonder-100: #eaeef5;

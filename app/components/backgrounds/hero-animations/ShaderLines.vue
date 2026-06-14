@@ -63,6 +63,11 @@ const props = defineProps({
         default: ShaderMosaic.BLOCKS,
         validator: (value: ShaderMosaic) => Object.values(ShaderMosaic).includes(value),
     },
+    colorScheme: {
+        type: String as PropType<ShaderColorScheme>,
+        default: ShaderColorScheme.DEFAULT,
+        validator: (value: ShaderColorScheme) => Object.values(ShaderColorScheme).includes(value),
+    },
     overlayClass: { type: String as PropType<string>, default: '' },
 })
 
@@ -73,6 +78,82 @@ const containerRef = ref<HTMLDivElement | null>(null)
 // Stores
 const themeStore = useThemeStore()
 const { isDark } = storeToRefs(themeStore)
+
+// Color scheme resolution
+const hexToVec3 = (hex: string): [number, number, number] => {
+    const cleaned = hex.replace('#', '')
+    return [
+        parseInt(cleaned.substring(0, 2), 16) / 255,
+        parseInt(cleaned.substring(2, 4), 16) / 255,
+        parseInt(cleaned.substring(4, 6), 16) / 255,
+    ]
+}
+
+const resolveCssVariable = (variableName: string): string => {
+    if (!import.meta.client) return '#000000'
+    const raw = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim()
+    if (raw.startsWith('#')) return raw
+    if (raw.startsWith('var(')) {
+        const innerVariable = raw.slice(4, -1).trim()
+        return resolveCssVariable(innerVariable)
+    }
+    return raw || '#000000'
+}
+
+const colorSchemeMap: Record<ShaderColorScheme, { primary: string; secondary: string; accent: string }> = {
+    [ShaderColorScheme.DEFAULT]: {
+        primary: '#454fff',
+        secondary: '#2b25ff',
+        accent: '#687cff',
+    },
+    [ShaderColorScheme.PRIMARY_BRAND]: {
+        primary: '--color-theme-primary-brand-500',
+        secondary: '--color-theme-primary-brand-700',
+        accent: '--color-theme-primary-brand-300',
+    },
+    [ShaderColorScheme.SECONDARY_BRAND]: {
+        primary: '--color-theme-secondary-brand-500',
+        secondary: '--color-theme-secondary-brand-700',
+        accent: '--color-theme-secondary-brand-300',
+    },
+    [ShaderColorScheme.BRAND_BLEND]: {
+        primary: '--color-theme-primary-brand-500',
+        secondary: '--color-theme-secondary-brand-500',
+        accent: '--color-theme-primary-brand-300',
+    },
+    [ShaderColorScheme.AMBER]: {
+        primary: '--amber-500',
+        secondary: '--amber-700',
+        accent: '--amber-300',
+    },
+    [ShaderColorScheme.EMERALD]: {
+        primary: '--emerald-500',
+        secondary: '--emerald-700',
+        accent: '--emerald-300',
+    },
+    [ShaderColorScheme.CORAL]: {
+        primary: '--coral-red-500',
+        secondary: '--coral-red-700',
+        accent: '--coral-red-300',
+    },
+    [ShaderColorScheme.PURPLE]: {
+        primary: '--purple-heart-500',
+        secondary: '--purple-heart-700',
+        accent: '--purple-heart-300',
+    },
+}
+
+const resolveSchemeColors = (
+    scheme: ShaderColorScheme,
+): { primary: [number, number, number]; secondary: [number, number, number]; accent: [number, number, number] } => {
+    const config = colorSchemeMap[scheme]
+    const resolve = (value: string) => (value.startsWith('--') ? hexToVec3(resolveCssVariable(value)) : hexToVec3(value))
+    return {
+        primary: resolve(config.primary),
+        secondary: resolve(config.secondary),
+        accent: resolve(config.accent),
+    }
+}
 
 // Shaders
 const vertexShader = `
@@ -90,7 +171,7 @@ const mosaicConfigs = {
     [ShaderMosaic.RADIAL]: { scaleX: 4, scaleY: 4, screenSize: 256, lineWidth: 0.0008, iterations: 5 },
 }
 
-const buildFragmentShader = (mosaic: ShaderMosaic) => {
+const buildFragmentShader = (mosaic: ShaderMosaic, colorScheme: ShaderColorScheme) => {
     const config = mosaicConfigs[mosaic]
 
     const radialQuantization = `
@@ -119,7 +200,15 @@ const buildFragmentShader = (mosaic: ShaderMosaic) => {
         precision highp float;
         uniform vec2 resolution;
         uniform float time;
-        uniform float uIsDark;
+        ${
+            colorScheme === ShaderColorScheme.DEFAULT
+                ? 'uniform float uIsDark;'
+                : `
+        uniform vec3 uColorPrimary;
+        uniform vec3 uColorSecondary;
+        uniform vec3 uColorAccent;
+        `
+        }
 
         float random(in float x) {
             return fract(sin(x) * 1e4);
@@ -145,15 +234,21 @@ const buildFragmentShader = (mosaic: ShaderMosaic) => {
                 }
             }
 
-            vec3 rawColor = vec3(color[2], color[1], color[0]);
-
+            ${
+                colorScheme === ShaderColorScheme.DEFAULT
+                    ? `vec3 rawColor = vec3(color[2], color[1], color[0]);
             vec3 finalColor = mix(
                 vec3(1.0) - rawColor * 0.6,
                 rawColor,
                 uIsDark
-            );
+            );`
+                    : `vec3 finalColor = uColorPrimary * color[2]
+                + uColorSecondary * color[1]
+                + uColorAccent * color[0];`
+            }
 
-            gl_FragColor = vec4(finalColor, 1.0);
+            float alpha = clamp(max(finalColor.r, max(finalColor.g, finalColor.b)), 0.0, 1.0);
+            gl_FragColor = vec4(finalColor, alpha);
         }
     `
 }
@@ -169,17 +264,25 @@ onMounted(() => {
     const geometry = new THREE.PlaneGeometry(2, 2)
 
     const container = containerRef.value
+    const isDefaultScheme = props.colorScheme === ShaderColorScheme.DEFAULT
+    const schemeColors = !isDefaultScheme ? resolveSchemeColors(props.colorScheme) : null
 
     const uniforms = {
         time: { type: 'f', value: 1 },
         resolution: { type: 'v2', value: new THREE.Vector2() },
-        uIsDark: { type: 'f', value: isDark.value ? 1 : 0 },
+        ...(isDefaultScheme
+            ? { uIsDark: { type: 'f', value: isDark.value ? 1 : 0 } }
+            : {
+                  uColorPrimary: { type: 'v3', value: new THREE.Vector3(...schemeColors!.primary) },
+                  uColorSecondary: { type: 'v3', value: new THREE.Vector3(...schemeColors!.secondary) },
+                  uColorAccent: { type: 'v3', value: new THREE.Vector3(...schemeColors!.accent) },
+              }),
     }
 
     const material = new THREE.ShaderMaterial({
         uniforms,
         vertexShader,
-        fragmentShader: buildFragmentShader(props.mosaic),
+        fragmentShader: buildFragmentShader(props.mosaic, props.colorScheme),
     })
 
     const mesh = new THREE.Mesh(geometry, material)
@@ -188,7 +291,9 @@ onMounted(() => {
     const renderer = new THREE.WebGLRenderer({
         canvas: canvasRef.value!,
         antialias: false,
+        alpha: true,
     })
+    renderer.setClearColor(0x000000, 0)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
     const resize = () => {
@@ -219,7 +324,19 @@ onMounted(() => {
     onUnmounted(() => resizeObserver.disconnect())
 
     watch(isDark, (dark) => {
-        uniforms.uIsDark.value = dark ? 1 : 0
+        if (isDefaultScheme) {
+            ;(uniforms as { uIsDark: { value: number } }).uIsDark.value = dark ? 1 : 0
+        } else {
+            const updatedColors = resolveSchemeColors(props.colorScheme)
+            const typedUniforms = uniforms as {
+                uColorPrimary: { value: THREE.Vector3 }
+                uColorSecondary: { value: THREE.Vector3 }
+                uColorAccent: { value: THREE.Vector3 }
+            }
+            typedUniforms.uColorPrimary.value.set(...updatedColors.primary)
+            typedUniforms.uColorSecondary.value.set(...updatedColors.secondary)
+            typedUniforms.uColorAccent.value.set(...updatedColors.accent)
+        }
     })
 })
 

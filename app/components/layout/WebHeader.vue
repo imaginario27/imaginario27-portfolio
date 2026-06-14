@@ -108,6 +108,13 @@ const wordpressMenuItems = computed<MenuItem[]>(() => {
 const menuItems = computed<MenuItem[]>(() => {
     const items = [...wordpressMenuItems.value]
 
+    if (items.length >= 2 && items[1]?.children?.length) {
+        items[1] = {
+            ...items[1],
+            to: items[1].children[0].to,
+        }
+    }
+
     if (items.length >= 3) {
         items[2] = { text: t('Sobre mí'), to: localePath('/about') }
     }

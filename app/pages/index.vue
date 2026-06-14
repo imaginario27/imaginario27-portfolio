@@ -47,12 +47,10 @@
         </SectionBody>
     </Section>
 
-    <div :class="['relative', 'isolate', 'overflow-hidden']">
-        <div :class="['absolute', 'inset-0', '[mask-image:linear-gradient(to_bottom,transparent_0%,black_25%)]']">
-            <WebsiteParallaxBackground />
-        </div>
+    <ParallaxContainer>
+        <WebsiteParallaxBackground fadeTop />
 
-        <div :class="['relative', 'z-10']">
+        <ParallaxChildContainer>
             <!-- Value Proposition -->
             <Section
                 id="value-proposition"
@@ -87,7 +85,7 @@
                         />
                         <FeatureCard
                             :title="$t('IA aplicada')"
-                            :description="$t('Integración con criterio técnico, no por tendencia. Prompt engineering · MCPs · Agentes.')"
+                            :description="$t('Integración con criterio técnico. Prompt engineering · MCPs · Agentes.')"
                             icon="mdi:robot-outline"
                             :containedIconColor="ColorAccent.SECONDARY_BRAND"
                         />
@@ -132,7 +130,7 @@
                             <p :class="['text-base', 'leading-relaxed', 'text-text-neutral-subtle', 'max-w-2xl']">
                                 {{
                                     $t(
-                                        'Vue, Nuxt, TypeScript y Tailwind. Design systems, interfaces accesibles y aplicaciones web. La IA también forma parte del flujo, pero con criterio técnico, no por moda.',
+                                        'Vue, Nuxt, TypeScript y Tailwind. Design systems, interfaces accesibles y aplicaciones web. La IA también forma parte del flujo, con criterio técnico.',
                                     )
                                 }}
                             </p>
@@ -229,10 +227,8 @@
                     </div>
                 </SectionBody>
             </Section>
-        </div>
-    </div>
-
-    <!-- Placeholder: Testimonials -->
+        </ParallaxChildContainer>
+    </ParallaxContainer>
 
     <!-- Final CTA -->
     <Section
@@ -301,6 +297,7 @@ const { t, locale } = useI18n()
 const cvOptions = computed<DropdownMenuItem[]>(() => [
     {
         actionType: DropdownActionType.LINK,
+        size: DropdownItemSize.LG,
         text: t('CV Frontend Developer'),
         to:
             locale.value === 'es'
@@ -310,6 +307,7 @@ const cvOptions = computed<DropdownMenuItem[]>(() => [
     },
     {
         actionType: DropdownActionType.LINK,
+        size: DropdownItemSize.LG,
         text: t('CV UI/UX Designer'),
         to:
             locale.value === 'es'

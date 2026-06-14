@@ -40,3 +40,6 @@ nsecure-result.json
 
 # Others
 inspiration
+
+# Lighthouse CI
+.lighthouseci
