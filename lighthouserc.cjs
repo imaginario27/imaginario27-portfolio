@@ -16,11 +16,7 @@ const getUrlsFromSitemap = () => {
     } catch {
         // Sitemap not reachable — fall back to hardcoded list
     }
-    return [
-        `${BASE_URL}/`,
-        `${BASE_URL}/about`,
-        `${BASE_URL}/contact`,
-    ]
+    return [`${BASE_URL}/`, `${BASE_URL}/about`, `${BASE_URL}/contact`]
 }
 
 module.exports = {

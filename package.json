@@ -27,7 +27,7 @@
         "lighthouse": "node app/scripts/lighthouse.cjs"
     },
     "dependencies": {
-        "@imaginario27/air-ui-ds": "1.13.4",
+        "@imaginario27/air-ui-ds": "1.13.11",
         "@imaginario27/air-ui-utils": "1.2.4",
         "@nuxt/content": "3.14.0",
         "@nuxt/fonts": "0.14.0",
