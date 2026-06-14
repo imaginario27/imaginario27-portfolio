@@ -157,7 +157,7 @@ const { data: menu } = useAsyncQuery({
 
 loadProjects()
 
-const extractSlug = (uri?: string | null): string => (uri ?? '').replace(/\/$/, '').split('/').filter(Boolean).pop() ?? ''
+const extractSlug = (uri?: string | null): string => (uri ?? '').replace(/\/$/, '').split('/').findLast(Boolean) ?? ''
 
 const categoryMenuItems = computed(() => {
     const nodes = (menu.value?.menuItems?.nodes ?? []) as MenuNode[]

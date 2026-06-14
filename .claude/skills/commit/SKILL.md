@@ -1,5 +1,4 @@
 ---
-name: commit
 description: Create a well-formatted commit from current changes with preview
 ---
 

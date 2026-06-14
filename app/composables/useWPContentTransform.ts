@@ -8,14 +8,14 @@ const GALLERY_MARKER_REGEX = /<!--wp-gallery:([\d,]+)(?:\|(\d+))?-->/g
 const GALLERY_INLINE_REGEX = /<!--wp-gallery-inline:([\s\S]*?)-->/g
 
 const wrapIframes: ContentTransform = (html) => {
-    return html.replace(
+    return html.replaceAll(
         /<iframe([^>]*)><\/iframe>/gi,
         '<div class="aspect-video w-full overflow-hidden rounded-lg"><iframe$1 class="h-full w-full" loading="lazy"></iframe></div>',
     )
 }
 
 const wrapVideo: ContentTransform = (html) => {
-    return html.replace(
+    return html.replaceAll(
         /<video([^>]*)>([\s\S]*?)<\/video>/gi,
         '<div class="aspect-video w-full overflow-hidden rounded-lg"><video$1 class="h-full w-full object-cover">$2</video></div>',
     )
@@ -26,7 +26,7 @@ const stripSocialSharing: ContentTransform = (html) => {
 }
 
 const cleanNbsp: ContentTransform = (html) => {
-    return html.replace(/&nbsp;/gi, ' ').trim()
+    return html.replaceAll(/&nbsp;/gi, ' ').trim()
 }
 
 const autoParagraph: ContentTransform = (html) => {
@@ -38,7 +38,7 @@ const autoParagraph: ContentTransform = (html) => {
         .map((block) => block.trim())
         .filter(Boolean)
         .map((block) => {
-            const withBreaks = block.replace(/\r?\n/g, '<br />')
+            const withBreaks = block.replaceAll(/\r?\n/g, '<br />')
             return `<p>${withBreaks}</p>`
         })
 
@@ -58,7 +58,7 @@ const buildGalleryMarker = (ids: string, columns: number | null): string => {
 }
 
 const convertGalleryShortcodes: ContentTransform = (html) => {
-    return html.replace(/\[gallery\s+[^\]]*ids="([^"]+)"[^\]]*\]/gi, (fullMatch, ids: string) => {
+    return html.replaceAll(/\[gallery\s+[^\]]*ids="([^"]+)"[^\]]*\]/gi, (fullMatch, ids: string) => {
         const cleaned = ids
             .split(',')
             .map((id: string) => id.trim())
@@ -135,6 +135,31 @@ const extractColumnsFromClass = (divTag: string): number | null => {
     return columns > 0 ? columns : null
 }
 
+const extractWpImageIds = (html: string): string[] => {
+    const ids: string[] = []
+    const wpImageRegex = /wp-image-(\d+)/g
+    let wpMatch: RegExpExecArray | null = null
+    while ((wpMatch = wpImageRegex.exec(html)) !== null) {
+        if (wpMatch[1]) ids.push(wpMatch[1])
+    }
+    return ids
+}
+
+const convertGalleryDivToMarker = (divTag: string, fullDiv: string): string => {
+    const columns = extractColumnsFromClass(divTag)
+    const ids = extractWpImageIds(fullDiv)
+
+    if (ids.length) {
+        return buildGalleryMarker(ids.join(','), columns)
+    }
+
+    const images = extractGalleryImages(fullDiv)
+    if (!images.length) return fullDiv
+
+    const payload = columns ? { images, columns } : { images }
+    return `${GALLERY_INLINE_PREFIX}${JSON.stringify(payload)}${GALLERY_INLINE_SUFFIX}`
+}
+
 const convertRenderedGalleries: ContentTransform = (html) => {
     const galleryDivRegex = /<div[^>]*class=["'][^"']*gallery[^"']*["'][^>]*>/gi
     let result = ''
@@ -146,26 +171,7 @@ const convertRenderedGalleries: ContentTransform = (html) => {
         if (!fullDiv) continue
 
         result += html.slice(lastIndex, divMatch.index)
-
-        const columns = extractColumnsFromClass(divMatch[0])
-        const ids: string[] = []
-        const wpImageRegex = /wp-image-(\d+)/g
-        let wpMatch: RegExpExecArray | null = null
-        while ((wpMatch = wpImageRegex.exec(fullDiv)) !== null) {
-            if (wpMatch[1]) ids.push(wpMatch[1])
-        }
-
-        if (ids.length) {
-            result += buildGalleryMarker(ids.join(','), columns)
-        } else {
-            const images = extractGalleryImages(fullDiv)
-            if (images.length) {
-                const payload = columns ? { images, columns } : { images }
-                result += `${GALLERY_INLINE_PREFIX}${JSON.stringify(payload)}${GALLERY_INLINE_SUFFIX}`
-            } else {
-                result += fullDiv
-            }
-        }
+        result += convertGalleryDivToMarker(divMatch[0], fullDiv)
 
         lastIndex = divMatch.index + fullDiv.length
         galleryDivRegex.lastIndex = lastIndex
@@ -176,11 +182,11 @@ const convertRenderedGalleries: ContentTransform = (html) => {
 }
 
 const stripInlineStyles: ContentTransform = (html) => {
-    return html.replace(/\s+style="[^"]*"/gi, '')
+    return html.replaceAll(/\s+style="[^"]*"/gi, '')
 }
 
 const stripSrcset: ContentTransform = (html) => {
-    return html.replace(/\s+srcset="[^"]*"/gi, '').replace(/\s+sizes="[^"]*"/gi, '')
+    return html.replaceAll(/\s+srcset="[^"]*"/gi, '').replaceAll(/\s+sizes="[^"]*"/gi, '')
 }
 
 const HTML_TRANSFORMS: ContentTransform[] = [
@@ -254,9 +260,9 @@ const extractImagesFromFragment = (fragment: string): GalleryImage[] => {
 
 const isImageOnlyContent = (html: string): boolean => {
     const stripped = html
-        .replace(/<a[^>]*>|<\/a>/gi, '')
-        .replace(/<img[^>]*\/?>/gi, '')
-        .replace(/\s+/g, '')
+        .replaceAll(/<a[^>]*>|<\/a>/gi, '')
+        .replaceAll(/<img[^>]*\/?>/gi, '')
+        .replaceAll(/\s+/g, '')
     return stripped.length === 0
 }
 
@@ -292,7 +298,7 @@ const parseInlineGalleryPayload = (jsonString: string): WPContentBlock | null =>
 }
 
 const parseParagraphBlock = (fullMatch: string): WPContentBlock => {
-    const inner = fullMatch.replace(/^<p[^>]*>|<\/p>$/gi, '')
+    const inner = fullMatch.replaceAll(/^<p[^>]*>|<\/p>$/gi, '')
 
     const galleryMarkerMatch = GALLERY_MARKER_REGEX.exec(inner)
     GALLERY_MARKER_REGEX.lastIndex = 0
@@ -324,8 +330,8 @@ const pushHtmlIfPresent = (blocks: WPContentBlock[], html: string) => {
 
 const BLOCK_PATTERN = [
     String.raw`(<p[^>]*>[\s\S]*?</p>)`,
-    `(${GALLERY_MARKER_PREFIX}[\\d,]+(?:\\|\\d+)?${GALLERY_MARKER_SUFFIX})`,
-    `(${GALLERY_INLINE_PREFIX}[\\s\\S]*?${GALLERY_INLINE_SUFFIX})`,
+    String.raw`(${GALLERY_MARKER_PREFIX}[\d,]+(?:\|\d+)?${GALLERY_MARKER_SUFFIX})`,
+    String.raw`(${GALLERY_INLINE_PREFIX}[\s\S]*?${GALLERY_INLINE_SUFFIX})`,
 ].join('|')
 
 const parseToBlocks = (html: string): WPContentBlock[] => {

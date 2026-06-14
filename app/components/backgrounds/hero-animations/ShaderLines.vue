@@ -83,9 +83,9 @@ const { isDark } = storeToRefs(themeStore)
 const hexToVec3 = (hex: string): [number, number, number] => {
     const cleaned = hex.replace('#', '')
     return [
-        parseInt(cleaned.substring(0, 2), 16) / 255,
-        parseInt(cleaned.substring(2, 4), 16) / 255,
-        parseInt(cleaned.substring(4, 6), 16) / 255,
+        Number.parseInt(cleaned.substring(0, 2), 16) / 255,
+        Number.parseInt(cleaned.substring(2, 4), 16) / 255,
+        Number.parseInt(cleaned.substring(4, 6), 16) / 255,
     ]
 }
 
@@ -265,7 +265,7 @@ onMounted(() => {
 
     const container = containerRef.value
     const isDefaultScheme = props.colorScheme === ShaderColorScheme.DEFAULT
-    const schemeColors = !isDefaultScheme ? resolveSchemeColors(props.colorScheme) : null
+    const schemeColors = isDefaultScheme ? null : resolveSchemeColors(props.colorScheme)
 
     const uniforms = {
         time: { type: 'f', value: 1 },

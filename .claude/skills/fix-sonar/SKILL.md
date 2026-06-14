@@ -1,5 +1,4 @@
 ---
-name: fix-sonar
 description: Run sonar:check and automatically fix all reported issues
 ---
 
