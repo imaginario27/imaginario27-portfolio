@@ -52,6 +52,7 @@
         "@lhci/cli": "0.15.1",
         "@nuxt/test-utils": "4.0.3",
         "@sonar/scan": "4.3.6",
+        "@tailwindcss/typography": "0.5.20",
         "@types/three": "0.184.1",
         "@vitest/coverage-v8": "4.1.7",
         "@vue/test-utils": "2.4.10",

@@ -109,7 +109,7 @@ export default defineNuxtConfig({
             meta: [
                 {
                     name: 'viewport',
-                    content: 'width=device-width, initial-scale=1.0, user-scalable=no',
+                    content: 'width=device-width, initial-scale=1.0',
                 },
             ],
         },
@@ -127,7 +127,7 @@ export default defineNuxtConfig({
     vite: {
         plugins: [tailwindcss()],
         optimizeDeps: {
-            include: ['vue3-toastify'],
+            include: ['three', 'vue3-toastify'],
         },
     },
 })

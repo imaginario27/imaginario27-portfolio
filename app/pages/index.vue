@@ -28,7 +28,13 @@
             </MaxWidthContainer>
         </SectionHeader>
         <SectionBody class="relative z-10">
+            <LoadingScreen
+                v-if="projectsPending"
+                :isFullScreen="false"
+                :loadingText="$t('Cargando…')"
+            />
             <Portfolio
+                v-else
                 :items="featuredItems"
                 :layout="GalleryLayout.MASONRY"
                 :columnsSm="1"
@@ -259,15 +265,19 @@
 
                 <div :class="['flex', 'flex-wrap', 'justify-center', 'gap-3', 'mt-4']">
                     <ActionButton
+                        :actionType="ButtonActionType.LINK"
                         :size="ButtonSize.XXL"
                         :styleType="ButtonStyleType.PRIMARY_BRAND_FILLED"
                         :text="$t('Hablemos de una vacante')"
+                        :to="localePath({ name: 'contact' })"
                         :class="isDark && 'shadow-[0_0_20px_var(--color-background-primary-brand-default)]'"
                     />
                     <ActionButton
+                        :actionType="ButtonActionType.LINK"
                         :size="ButtonSize.XXL"
                         :styleType="ButtonStyleType.NEUTRAL_OUTLINED"
                         :text="$t('Ver portfolio')"
+                        :to="localePath('/proyectos-de-desarrollo-web-front-end')"
                         :class="isDark && 'shadow-[0_0_20px_var(--color-background-neutral-subtle)]'"
                     />
                 </div>
@@ -278,7 +288,7 @@
 
 <script setup lang="ts">
 // Composables
-const { items: featuredItems, fetchProjects } = usePortfolioData()
+const { items: featuredItems, pending: projectsPending, fetchProjects } = usePortfolioData()
 const { isMobile } = useIsMobile()
 
 // Computed
@@ -292,6 +302,7 @@ const { isDark } = storeToRefs(themeStore)
 
 // Translations
 const { t, locale } = useI18n()
+const localePath = useLocalePath()
 
 // CV Dropdowns
 const cvOptions = computed<DropdownMenuItem[]>(() => [
@@ -323,7 +334,11 @@ const { data: seoData } = await useAsyncQuery({
     variables: { slug: '/' },
 })
 
-await fetchProjects({ first: portfolioItemsToShow.value })
+await fetchProjects({ first: portfolioItemsToShow.value, language: locale.value })
+
+watch(locale, () => {
+    fetchProjects({ first: portfolioItemsToShow.value, language: locale.value })
+})
 
 useWPSeo(
     computed(() => seoData.value?.page?.seo),

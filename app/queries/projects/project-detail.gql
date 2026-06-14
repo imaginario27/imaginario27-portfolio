@@ -1,0 +1,64 @@
+query GetProjectDetail($slug: String!, $language: String) {
+    projects(where: { name: $slug, language: $language }, first: 1) {
+        nodes {
+            databaseId
+            title
+            slug
+            uri
+            date
+            content(format: RENDERED)
+            excerpt
+            language {
+                code
+            }
+            translations {
+                slug
+                uri
+                language {
+                    code
+                }
+            }
+            featuredImage {
+                node {
+                    sourceUrl
+                    altText
+                    mediaDetails {
+                        width
+                        height
+                    }
+                }
+            }
+            clientes {
+                nodes {
+                    name
+                    slug
+                }
+            }
+            formatos {
+                nodes {
+                    name
+                    databaseId
+                }
+            }
+            projectTags {
+                nodes {
+                    name
+                    slug
+                }
+            }
+            tecnologias {
+                nodes {
+                    name
+                    slug
+                }
+            }
+            projectCategories {
+                nodes {
+                    name
+                    slug
+                    databaseId
+                }
+            }
+        }
+    }
+}
