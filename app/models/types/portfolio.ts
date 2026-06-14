@@ -9,6 +9,7 @@ export type PortfolioItem = {
 }
 
 export type PortfolioTerm = {
+    databaseId?: number
     slug: string
     name: string
 }
@@ -36,5 +37,5 @@ export type ProjectNode = {
 }
 
 type TaxonomyNodes = {
-    nodes?: Array<{ slug?: string | null; name?: string | null }> | null
+    nodes?: Array<{ databaseId?: number | null; slug?: string | null; name?: string | null }> | null
 }

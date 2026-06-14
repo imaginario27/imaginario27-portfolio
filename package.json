@@ -23,7 +23,8 @@
         "sonar": "sonar-scanner",
         "sonar:check": "ts-node app/scripts/sonar-check.ts",
         "air-ui:check": "node app/scripts/air-ui-check.ts",
-        "preflight-check": "npm run air-ui:check -- --strict && npm run format:check && npm run translations:check && npm run test"
+        "preflight": "npm run air-ui:check -- --strict && npm run format:check && npm run translations:check && npm run test",
+        "lighthouse": "node app/scripts/lighthouse.cjs"
     },
     "dependencies": {
         "@imaginario27/air-ui-ds": "1.13.4",
@@ -43,17 +44,19 @@
         "pinia": "3.0.4",
         "tailwindcss": "4.3.0",
         "three": "0.184.0",
-        "vue": "^3.5.34",
-        "vue-router": "^5.0.7",
+        "vue": "3.5.34",
+        "vue-router": "5.0.7",
         "vue3-toastify": "0.2.9"
     },
     "devDependencies": {
+        "@lhci/cli": "0.15.1",
         "@nuxt/test-utils": "4.0.3",
         "@sonar/scan": "4.3.6",
         "@types/three": "0.184.1",
         "@vitest/coverage-v8": "4.1.7",
         "@vue/test-utils": "2.4.10",
         "eslint": "10.4.0",
+        "eslint-plugin-vuejs-accessibility": "2.5.0",
         "happy-dom": "20.9.0",
         "playwright-core": "1.60.0",
         "prettier": "3.8.3",

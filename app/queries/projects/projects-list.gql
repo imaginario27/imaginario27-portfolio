@@ -19,6 +19,7 @@ query ProjectsList($first: Int, $after: String, $language: String) {
             }
             projectCategories {
                 nodes {
+                    databaseId
                     slug
                     name
                 }

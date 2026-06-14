@@ -5,6 +5,7 @@
                 width="100%"
                 height="100%"
                 :mosaic="ShaderMosaic.RADIAL"
+                :colorScheme="ShaderColorScheme.SECONDARY_BRAND"
                 overlayClass="bg-background-surface/70"
             />
         </div>
