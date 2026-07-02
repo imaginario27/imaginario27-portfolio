@@ -40,6 +40,7 @@ const themeToggleIconButtons = computed(() =>
     themes.value.map((theme) => ({
         icon: theme.icon,
         value: theme.value,
+        ariaLabel: theme.text,
     })),
 )
 

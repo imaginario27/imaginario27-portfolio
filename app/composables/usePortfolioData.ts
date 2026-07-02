@@ -40,7 +40,7 @@ query ProjectsByCategory($categoryId: ID!, $first: Int, $after: String) {
 
 const stripHtml = (html: string | null | undefined): string => {
     if (!html) return ''
-    return html.replace(/<[^>]*>/g, '').trim()
+    return html.replaceAll(/<[^>]*>/g, '').trim()
 }
 
 const toGalleryImage = (portfolioItem: PortfolioItem, taxonomyKey: string): GalleryImage => ({
@@ -62,7 +62,7 @@ const mapNodeToPortfolioItem = (node: ProjectNode): PortfolioItem | null => {
         taxonomies[key] = raw
             .filter((term): term is { databaseId?: number | null; slug: string; name: string } => Boolean(term.slug && term.name))
             .map((term) => ({
-                ...(term.databaseId != null ? { databaseId: term.databaseId } : {}),
+                ...(term.databaseId == null ? {} : { databaseId: term.databaseId }),
                 slug: term.slug,
                 name: term.name,
             }))
@@ -89,7 +89,8 @@ export const usePortfolioData = () => {
     const items = ref<PortfolioItem[]>([])
     const pending = ref(false)
     const config = useRuntimeConfig()
-    const graphqlEndpoint = String((config.public as Record<string, unknown>).GQL_HOST ?? 'https://imaginario27.com/graphql')
+    const gqlHost = (config.public as Record<string, unknown>).GQL_HOST
+    const graphqlEndpoint = typeof gqlHost === 'string' ? gqlHost : 'https://imaginario27.com/graphql'
 
     const setItems = (preloaded: PortfolioItem[]) => {
         items.value = preloaded

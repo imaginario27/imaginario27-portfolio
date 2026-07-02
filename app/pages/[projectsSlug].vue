@@ -41,7 +41,13 @@
                 />
             </MaxWidthContainer>
 
+            <LoadingScreen
+                v-if="pending"
+                :isFullScreen="false"
+                :loadingText="$t('Cargando…')"
+            />
             <Portfolio
+                v-else
                 id="portfolio-grid"
                 :items="displayedItems"
                 :layout="GalleryLayout.MASONRY"
@@ -63,6 +69,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+    fullPageParallax: true,
+})
+
 // Page type configuration
 const PAGE_CONFIGS: ProjectPageConfig[] = [
     {
@@ -103,7 +113,7 @@ const SLUG_TO_PAGE_TYPE: Record<string, ProjectPageType> = {
 // Composables
 const route = useRoute()
 const { t, locale } = useI18n()
-const { items, fetchProjects, buildFilterOptions } = usePortfolioData()
+const { items, pending, fetchProjects, buildFilterOptions } = usePortfolioData()
 
 // Resolve page type from route slug (synchronous, no network)
 const projectsSlug = computed(() => route.params.projectsSlug as string)
@@ -135,9 +145,8 @@ const loadProjects = async () => {
     }
 }
 
-// --- Parallel data fetching ---
-// Menu and projects fire simultaneously
-const menuPromise = useAsyncQuery({
+// --- Non-blocking data fetching ---
+const { data: menu } = useAsyncQuery({
     operation: 'Menu',
     variables: {
         language: locale,
@@ -145,12 +154,10 @@ const menuPromise = useAsyncQuery({
     },
     options: { watch: [locale] },
 })
-const projectsPromise = loadProjects()
 
-// Menu must resolve before redirect logic
-const { data: menu } = await menuPromise
+loadProjects()
 
-const extractSlug = (uri?: string | null): string => (uri ?? '').replace(/\/$/, '').split('/').filter(Boolean).pop() ?? ''
+const extractSlug = (uri?: string | null): string => (uri ?? '').replace(/\/$/, '').split('/').findLast(Boolean) ?? ''
 
 const categoryMenuItems = computed(() => {
     const nodes = (menu.value?.menuItems?.nodes ?? []) as MenuNode[]
@@ -159,20 +166,23 @@ const categoryMenuItems = computed(() => {
 
 const matchedChild = computed(() => categoryMenuItems.value.find((child) => extractSlug(child.uri) === projectsSlug.value))
 
-if (!matchedChild.value) {
-    const correctChild = categoryMenuItems.value.find((child) => SLUG_TO_PAGE_TYPE[extractSlug(child.uri)] === pageType.value)
-    if (correctChild?.uri) {
-        await navigateTo(correctChild.uri.replace(/\/$/, ''), { replace: true })
-    }
-}
+watch(
+    matchedChild,
+    (matched) => {
+        if (menu.value && !matched) {
+            const correctChild = categoryMenuItems.value.find((child) => SLUG_TO_PAGE_TYPE[extractSlug(child.uri)] === pageType.value)
+            if (correctChild?.uri) {
+                navigateTo(correctChild.uri.replace(/\/$/, ''), { replace: true })
+            }
+        }
+    },
+    { immediate: true },
+)
 
-// SEO starts after menu (needs matchedChild), overlaps with remaining projects fetch
-const seoPromise = useAsyncQuery({
+const { data: seoData } = useAsyncQuery({
     operation: 'GetPageSEO',
     variables: { slug: computed(() => matchedChild.value?.uri ?? `/${projectsSlug.value}`) },
 })
-
-const [{ data: seoData }] = await Promise.all([seoPromise, projectsPromise])
 
 useWPSeo(
     computed(() => seoData.value?.page?.seo),

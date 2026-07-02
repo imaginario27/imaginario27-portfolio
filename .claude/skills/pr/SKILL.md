@@ -1,5 +1,4 @@
 ---
-name: pr
 description: Create a pull request from current branch to main with preview
 ---
 
@@ -29,6 +28,7 @@ Create a pull request from the current branch to `main`.
 - <change>
 
 (If all changes share one topic, skip the headings and just use a flat bullet list.)
+```
 
 5. **Show the user a preview** of the full PR (title + body) before creating it.
 6. Wait for user approval or edits.
@@ -46,4 +46,3 @@ Create a pull request from the current branch to `main`.
 - **Never** include "Generated with Claude Code" or similar attribution lines.
 - Never create the PR without showing the preview first and getting approval.
 - If there are uncommitted changes, ask the user if they want to commit first (suggest using `/commit`).
-```

@@ -1,5 +1,4 @@
 ---
-name: test
 description: Create a unit test for a component, composable, util, or store following project conventions
 ---
 

@@ -35,6 +35,7 @@ export const useLanguageStore = defineStore('language', () => {
             id: String(index + 1),
             text: lang.name ?? 'Language name not found',
             imgUrl: `/flags/flag-${lang.code}.png`,
+            alt: lang.name ?? lang.code,
             value: lang.code,
             callback: () => setLanguage(lang.code as LanguageCode),
         })),

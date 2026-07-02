@@ -71,15 +71,19 @@
             <!-- CTAs -->
             <div :class="['mt-8', 'flex', 'flex-wrap', 'items-center', 'justify-center', 'gap-3', 'pointer-events-auto']">
                 <ActionButton
+                    :actionType="ButtonActionType.LINK"
                     :size="ButtonSize.XXL"
                     :styleType="ButtonStyleType.PRIMARY_BRAND_FILLED"
                     :text="$t('Ver proyectos')"
+                    :to="localePath('/proyectos-de-desarrollo-web-front-end')"
                     :class="isDark && 'shadow-[0_0_20px_var(--color-background-primary-brand-default)]'"
                 />
                 <ActionButton
+                    :actionType="ButtonActionType.LINK"
                     :size="ButtonSize.XXL"
                     :styleType="ButtonStyleType.NEUTRAL_OUTLINED"
                     :text="$t('Contactar')"
+                    :to="localePath({ name: 'contact' })"
                     :class="isDark && 'shadow-[0_0_20px_var(--color-background-neutral-subtle)]'"
                 />
             </div>
@@ -90,6 +94,7 @@
 <script setup lang="ts">
 // Translations
 const { t } = useI18n()
+const localePath = useLocalePath()
 
 // Computed
 const roles = computed(() => [t('UI/UX Designer'), t('Frontend Developer'), t('AI-driven workflow')])

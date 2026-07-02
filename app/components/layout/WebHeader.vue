@@ -9,6 +9,7 @@
             <AppLogo
                 :src="isDark ? logoDark : logoLight"
                 :to="localePath('/')"
+                alt="Imaginario27"
                 logoClass="w-[180px]!"
             />
         </template>
